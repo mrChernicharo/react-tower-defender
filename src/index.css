@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  background-color: indigo;
+  padding: .5rem 1rem;
+  border-radius: 50px;
+}
