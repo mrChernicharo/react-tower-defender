@@ -4,6 +4,7 @@ export function useTile() {
   const [selectedTileId, setSelectedTileId] = useState(null);
 
   function handleTileClick(e) {
+    // console.log({ e, s: selectedTileId, t: e.target.id });
     const clickedEnemy = e.target.dataset?.name?.includes("enemy");
     if (clickedEnemy) {
       console.log("clicked enemy");
@@ -14,17 +15,16 @@ export function useTile() {
       .composedPath()
       .find((el) => ["game-header", "stage-map-g"].includes(el.id));
 
-    // console.log({ e, s: selectedTileId, t: e.target.id });
     if (clickedOutside) {
       console.log("clicked outside");
       return setSelectedTileId(null);
     }
 
     const clickedTile = e.target.dataset?.name?.includes("tile");
-    const clickedSelectInnerRing =
-      e.target.dataset?.name?.includes("select-ring-inner");
     const clickedTowerIcon = e.target.dataset?.name?.includes("tower-icon");
     const clickedPathIcon = e.target.dataset?.name?.includes("path-icon");
+    const clickedSelectInnerRing =
+      e.target.dataset?.name?.includes("select-ring-inner");
 
     if (clickedSelectInnerRing) {
       console.log("clicked inside ring");
@@ -33,6 +33,7 @@ export function useTile() {
 
     if (clickedTowerIcon || clickedPathIcon) {
       console.log(`clicked ${e.target.dataset.name}`);
+      setTimeout(() => setSelectedTileId(null), 0);
       return;
     }
 
@@ -41,10 +42,10 @@ export function useTile() {
       // clicked same tile
       if (e.target.id === selectedTileId) {
         return setSelectedTileId(null);
+      } else {
+        console.log("open menu!");
+        setSelectedTileId(e.target.id);
       }
-
-      console.log("open menu!")
-      setSelectedTileId(e.target.id);
     }
   }
 

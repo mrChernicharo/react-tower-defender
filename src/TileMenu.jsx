@@ -1,4 +1,5 @@
-import { useStageMaps } from "./hooks/useStageMaps";
+import { useStore } from "./App";
+// import { useStageMaps } from "./hooks/useStageMaps";
 import { useTile } from "./hooks/useTile";
 import {
   HIGHLIGHTED_TILE_COLORS,
@@ -12,9 +13,33 @@ import {
 export default function TileMenu() {
   const { selectedTileId } = useTile();
 
-  const { stageMap } = useStageMaps();
+  const [stages, setStore] = useStore((store) => store.stages);
+  const [stageNumber] = useStore((store) => store.stageNumber);
 
-  const activeTile = stageMap.tiles.find((tile) => selectedTileId === tile.id);
+  function canBecomePath(tile) {
+    return tile.type === "grass";
+  }
+
+  function createNewPath(tile) {
+    console.log("createNewPath", tile);
+    // TODO: We need to have our tiles in memory
+    const newTile = { ...tile, type: "path" };
+    setStore({
+      stages: {
+        ...stages,
+        [stageNumber]: {
+          ...stages[stageNumber],
+          tiles: [...stages[stageNumber].tiles].map((t) =>
+            t.id === newTile.id ? newTile : t
+          ),
+        },
+      },
+    });
+  }
+
+  const activeTile = stages[stageNumber].tiles.find(
+    (tile) => selectedTileId === tile.id
+  );
 
   if (!activeTile) return null;
 
@@ -25,31 +50,21 @@ export default function TileMenu() {
     switch (direction) {
       case "left":
         {
-          adj = STAGE_MAPS[0].tiles.find((t) => t.id === `${x - 1}:${y}`);
+          adj = stages[stageNumber].tiles.find((t) => t.id === `${x - 1}:${y}`);
         }
         break;
       case "right":
         {
-          adj = STAGE_MAPS[0].tiles.find((t) => t.id === `${x + 1}:${y}`);
+          adj = stages[stageNumber].tiles.find((t) => t.id === `${x + 1}:${y}`);
         }
         break;
       case "bottom":
         {
-          adj = STAGE_MAPS[0].tiles.find((t) => t.id === `${x}:${y + 1}`);
+          adj = stages[stageNumber].tiles.find((t) => t.id === `${x}:${y + 1}`);
         }
         break;
     }
     return adj || null;
-  }
-
-  function canBecomePath(tile) {
-    return tile.type === "grass";
-  }
-
-  function createNewPath(tile) {
-    console.log("createNewPath", tile);
-    // TODO: We need to have our tiles in memory
-    tile.style = "path";
   }
 
   const tileMenus = {

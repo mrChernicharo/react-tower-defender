@@ -11,7 +11,7 @@ export default function Enemies({ circleY }) {
       />
       <circle
         data-name="enemy"
-        fill="orange"
+        fill="purple"
         r={16}
         cx={400}
         cy={circleY + 60}

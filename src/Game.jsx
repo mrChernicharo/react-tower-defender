@@ -12,7 +12,8 @@ import { useTile } from "./hooks/useTile";
 import TileMenu from "./TileMenu";
 import Tiles from "./Tiles";
 import Enemies from "./Enemies";
-import { useStageMaps } from "./hooks/useStageMaps";
+// import { useStageMaps } from "./hooks/useStageMaps";
+import { useStore } from "./App";
 
 export function Game() {
   const movement = 20; // 20px/sec
@@ -26,7 +27,7 @@ export function Game() {
 
   const { selectedTileId } = useTile();
 
-  const { stageNumber } = useStageMaps();
+  const [stageNumber, setStore] = useStore((store) => store.stageNumber);
 
   const { clock, playing, speed, pause, play, toggleSpeed } =
     useGameLoop(handleGameLoop);
@@ -45,6 +46,13 @@ export function Game() {
       <div>Stage : {stageNumber}</div>
       <div>Selected Tile: {selectedTileId}</div>
       {/* <div>yPos: {circleY.toFixed(1)}</div> */}
+      <button
+        onClick={() => {
+          setStore({ stageNumber: stageNumber === 1 ? 0 : 1 });
+        }}
+      >
+        Change Stage
+      </button>
 
       <svg width={600} height={1200} className="bg-gray-500 mx-auto">
         <g id="stage-map-g">
