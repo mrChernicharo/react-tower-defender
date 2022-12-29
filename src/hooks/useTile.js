@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { STAGE_MAPS } from "../lib/constants";
 
 export function useTile() {
   const [selectedTileId, setSelectedTileId] = useState(null);
@@ -22,22 +21,29 @@ export function useTile() {
     }
 
     const clickedTile = e.target.dataset?.name?.includes("tile");
-    const clickedTowerSelectInnerRing =
-      e.target.dataset?.name?.includes("tower-select-inner");
+    const clickedSelectInnerRing =
+      e.target.dataset?.name?.includes("select-ring-inner");
     const clickedTowerIcon = e.target.dataset?.name?.includes("tower-icon");
+    const clickedPathIcon = e.target.dataset?.name?.includes("path-icon");
 
-    if (clickedTowerSelectInnerRing) {
+    if (clickedSelectInnerRing) {
       console.log("clicked inside ring");
       return setSelectedTileId(null);
     }
 
-    if (clickedTowerIcon) {
+    if (clickedTowerIcon || clickedPathIcon) {
       console.log(`clicked ${e.target.dataset.name}`);
       return;
     }
 
     if (clickedTile) {
-      console.log("clicked tile, open tower menu");
+      console.log("clicked tile");
+      // clicked same tile
+      if (e.target.id === selectedTileId) {
+        return setSelectedTileId(null);
+      }
+
+      console.log("open menu!")
       setSelectedTileId(e.target.id);
     }
   }

@@ -9,9 +9,10 @@ import {
 import { GameHeader } from "./GameHeader";
 import { useGameLoop } from "./hooks/useGameLoop";
 import { useTile } from "./hooks/useTile";
-import TowerSelect from "./TowerSelect";
+import TileMenu from "./TileMenu";
 import Tiles from "./Tiles";
 import Enemies from "./Enemies";
+import { useStageMaps } from "./hooks/useStageMaps";
 
 export function Game() {
   const movement = 20; // 20px/sec
@@ -24,6 +25,8 @@ export function Game() {
   }
 
   const { selectedTileId } = useTile();
+
+  const { stageNumber } = useStageMaps();
 
   const { clock, playing, speed, pause, play, toggleSpeed } =
     useGameLoop(handleGameLoop);
@@ -39,13 +42,14 @@ export function Game() {
         toggleSpeed={toggleSpeed}
       />
 
+      <div>Stage : {stageNumber}</div>
       <div>Selected Tile: {selectedTileId}</div>
       {/* <div>yPos: {circleY.toFixed(1)}</div> */}
 
       <svg width={600} height={1200} className="bg-gray-500 mx-auto">
         <g id="stage-map-g">
           <Tiles />
-          <TowerSelect />
+          <TileMenu />
           <Enemies circleY={circleY} />
         </g>
       </svg>

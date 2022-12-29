@@ -7,3 +7,8 @@
   padding: .5rem 1rem;
   border-radius: 50px;
 }
+
+text {
+  pointer-events: none;
+  user-select: none;
+}

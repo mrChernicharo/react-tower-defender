@@ -1,3 +1,4 @@
+import { useStageMaps } from "./hooks/useStageMaps";
 import { useTile } from "./hooks/useTile";
 import {
   HIGHLIGHTED_TILE_COLORS,
@@ -10,9 +11,11 @@ const pathIcon = "⛏";
 export default function Tiles() {
   const { selectedTileId } = useTile();
 
+  const { stageMap } = useStageMaps();
+
   return (
     <>
-      {STAGE_MAPS[0].tiles.map(({ id, x, y, type }) => (
+      {stageMap.tiles.map(({ id, x, y, type }) => (
         <g key={`tile-${id}`}>
           <rect
             className="tile"
