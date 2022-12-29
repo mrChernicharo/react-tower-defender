@@ -7,7 +7,11 @@ export function GameHeader({
   toggleSpeed,
 }) {
   return (
-    <div className="border sticky top-0 bg-gray-700">
+    <div
+      className="border sticky top-0 bg-gray-700"
+      data-name="game-header"
+      id="game-header"
+    >
       <div>{clock.toFixed(1)}</div>
       <div>{playing ? "Playing" : "Paused"}</div>
       <button className="btn" onClick={() => play()}>
