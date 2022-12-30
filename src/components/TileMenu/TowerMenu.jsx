@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Ring from "../../assets/Ring";
 import { useStore } from "../../context/createFastContext";
 import { useTile } from "../../hooks/useTile";
 import {
@@ -8,14 +9,31 @@ import {
   towerIcons,
 } from "../../lib/constants";
 
-export default function TowerMenu({ id, x, y, type }) {
+export default function TowerMenu({ id, x, y, type, hasTower }) {
   const { selectedTileId } = useTile();
-  console.log({ id, x, y, selectedTileId });
+  // console.log({ id, x, y, selectedTileId });
 
   const [towers, setStore] = useStore((store) => store.towers);
   const [gold] = useStore((store) => store.gold);
+  const [stages] = useStore((store) => store.stages);
+  const [stageNumber] = useStore((store) => store.stageNumber);
   const [subMenuOpen, setSubMenuOpen] = useState(false);
   const [previewedTower, setPreviewedTower] = useState(null);
+  const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
+
+  function getUpdatedTiles(tileId) {
+    const tile = tiles.find((t) => t.id === tileId);
+    const newTile = { ...tile, hasTower: true };
+    return {
+      ...stages,
+      [stageNumber]: {
+        ...stages[stageNumber],
+        tiles: [...stages[stageNumber].tiles].map((t) =>
+          t.id === tileId ? newTile : t
+        ),
+      },
+    };
+  }
 
   function getTowerIconPos(pos) {
     if (!["x", "y"].includes(pos)) throw Error("x or y expected");
@@ -31,10 +49,14 @@ export default function TowerMenu({ id, x, y, type }) {
     setPreviewedTower(tower);
   }
 
-  function handleCreateNewTower() {
-    console.log("create new tower!", { ...previewedTower });
+  function handleCreateNewTower(tileId, x, y) {
+    const newTower = { ...previewedTower, tileId, x, y };
+    console.log("create new tower!", { ...newTower });
+
     setStore({
-      towers: [...towers, previewedTower],
+      towers: [...towers, newTower],
+      stages: getUpdatedTiles(tileId),
+      gold: gold - newTower.price,
     });
     setSubMenuOpen(false);
     setPreviewedTower(null);
@@ -45,21 +67,19 @@ export default function TowerMenu({ id, x, y, type }) {
     setPreviewedTower(null);
   }, [id]);
 
+  if (hasTower)
+    return (
+      <Ring
+        x={x * TILE_SIZE - 24 + TILE_SIZE / 2}
+        y={y * TILE_SIZE - 24 + TILE_SIZE / 2}
+      />
+    );
+
   return (
     <g key={`tower-select-${id}`}>
-      <circle
-        data-name={`tower-select-ring-outer`}
-        r={80}
-        cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-        cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
-        opacity={0.5}
-      />
-      <circle
-        data-name={`tower-select-ring-inner`}
-        fill={HIGHLIGHTED_TILE_COLORS[type]}
-        r={45}
-        cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-        cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+      <Ring
+        x={x * TILE_SIZE - 24 + TILE_SIZE / 2}
+        y={y * TILE_SIZE - 24 + TILE_SIZE / 2}
       />
 
       {towerIcons.map(({ name, tx, ty, fill }) => (
@@ -79,7 +99,11 @@ export default function TowerMenu({ id, x, y, type }) {
                 subMenuOpen &&
                 previewedTower.name === name &&
                 previewedTower.price <= gold
-                  ? handleCreateNewTower()
+                  ? handleCreateNewTower(
+                      id,
+                      x * TILE_SIZE + 50 + TILE_SIZE / 2,
+                      y * TILE_SIZE + 50 + TILE_SIZE / 2
+                    )
                   : handleTowerPreview(id, name);
               }}
             />

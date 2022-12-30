@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useSyncExternalStore, // meant to subscribe to a dataSource
 } from "react";
-import { STAGE_MAPS } from "../lib/constants";
+import { STAGE_MAPS, initialGold } from "../lib/constants";
 
 export default function createFastContext(initialState) {
   function useStoreData() {
@@ -70,7 +70,8 @@ export const { Provider: GameProvider, useStore } = createFastContext({
   stages: STAGE_MAPS,
   towers: [],
   path: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
-  gold: 500,
+  gold: initialGold,
+  inBattle: false,
 });
 
 // console.log({

@@ -1,3 +1,4 @@
+import Ring from "../../assets/Ring";
 import { useStore } from "../../context/createFastContext";
 import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../lib/constants";
 import { getGridHeight } from "../../lib/helpers";
@@ -8,18 +9,26 @@ export default function PathMenu({ id, x, y, type }) {
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
   const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
+  const [inBattle] = useStore((store) => store.inBattle);
 
   const gridHeight = getGridHeight(tiles);
   const firstWaveRow = gridHeight - waveCount;
 
   function canBecomePath(tile) {
-    return tile.type === "grass";
+    return !inBattle && tile.type === "grass" && !tile.hasTower;
   }
 
-  function updateCurrentWave(tile) {
+  function getCurrentWave(tile) {
     const barrierBroken = tile.y > firstWaveRow;
     const wave = barrierBroken ? tile.y - firstWaveRow : null;
-    console.log(barrierBroken ? `CALL WAVE ${wave}!` : "");
+
+    if (barrierBroken) {
+      // const newTile = { ...tile, enemyEntrance: true };
+      // console.log(getUpdatedTiles(newTile));
+      console.log(`CALL WAVE ${wave}!`);
+      // TODO:  { ...tile, enemyEntrance: true }
+      // setStore({ inBattle: true });
+    }
     return wave;
   }
 
@@ -40,7 +49,7 @@ export default function PathMenu({ id, x, y, type }) {
     const newTile = { ...tile, type: "path" };
 
     setStore({
-      currentWave: updateCurrentWave(newTile),
+      currentWave: getCurrentWave(newTile),
       stages: getUpdatedTiles(newTile),
       path: [...path, newTile],
     });
@@ -70,19 +79,9 @@ export default function PathMenu({ id, x, y, type }) {
 
   return (
     <g key={`path-select-${id}`}>
-      <circle
-        data-name={`path-select-ring-outer`}
-        r={80}
-        cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-        cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
-        opacity={0.5}
-      />
-      <circle
-        data-name={`path-select-ring-inner`}
-        fill={TILE_COLORS[type]}
-        r={45}
-        cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-        cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+      <Ring
+        x={x * TILE_SIZE - 24 + TILE_SIZE / 2}
+        y={y * TILE_SIZE - 24 + TILE_SIZE / 2}
       />
       {pathIcons.map(({ id, name, tx, ty, fill, icon }) => {
         const adjacentTile = getAdjacentTile(name);

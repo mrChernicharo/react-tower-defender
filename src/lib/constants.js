@@ -12,6 +12,8 @@ export const HIGHLIGHTED_TILE_COLORS = {
   path: "orange",
 };
 
+export const initialGold = 300;
+
 export const STAGE_MAPS = {
   0: {
     id: 0,

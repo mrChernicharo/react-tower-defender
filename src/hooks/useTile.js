@@ -5,9 +5,18 @@ export function useTile() {
 
   function handleTileClick(e) {
     // console.log({ e, s: selectedTileId, t: e.target.id });
+
+    const clickedTower = e.target.classList.contains("tower");
+    if (clickedTower) {
+      const tileId = e.target.id.split("::")[0];
+      setSelectedTileId(tileId);
+      // console.log("clicked tower, open menu!");
+      return;
+    }
+
     const clickedEnemy = e.target.dataset?.name?.includes("enemy");
     if (clickedEnemy) {
-      console.log("clicked enemy");
+      // console.log("clicked enemy");
       return;
     }
 
@@ -16,7 +25,7 @@ export function useTile() {
       .find((el) => ["game-header", "stage-map-g"].includes(el.id));
 
     if (clickedOutside) {
-      console.log("clicked outside");
+      // console.log("clicked outside");
       return setSelectedTileId(null);
     }
 
@@ -29,22 +38,22 @@ export function useTile() {
       e.target.dataset?.name?.includes("select-ring-inner");
 
     if (clickedSelectInnerRing) {
-      console.log("clicked inside ring");
+      // console.log("clicked inside ring");
       return setSelectedTileId(null);
     }
 
     if (clickedTowerIcon) {
-      console.log(`clicked ${e.target.dataset.name}`);
+      // console.log(`clicked ${e.target.dataset.name}`);
       return;
     }
 
-    // if (clickedCreateTowerIcon) {
-    //   console.log(`clickedCreateTowerIcon ${e.target.dataset.name}`);
-    //   return setTimeout(() => setSelectedTileId(null), 0);
-    // }
+    if (clickedCreateTowerIcon) {
+      // console.log(`clickedCreateTowerIcon ${e.target.dataset.name}`);
+      return setTimeout(() => setSelectedTileId(null), 0);
+    }
 
     if (clickedPathIcon) {
-      console.log(`clicked ${e.target.dataset.name}`);
+      // console.log(`clicked ${e.target.dataset.name}`);
       setTimeout(() => setSelectedTileId(null), 0);
       return;
     }
@@ -54,15 +63,15 @@ export function useTile() {
       if (e.target.id === selectedTileId) {
         return setSelectedTileId(null);
       } else {
-        console.log("open menu!");
+        // console.log("open menu!");
         setSelectedTileId(e.target.id);
       }
     }
   }
 
   useEffect(() => {
-    document.addEventListener("click", handleTileClick);
-    return () => document.removeEventListener("click", handleTileClick);
+    document.addEventListener("pointerup", handleTileClick);
+    return () => document.removeEventListener("pointerup", handleTileClick);
   }, [handleTileClick]);
 
   return {

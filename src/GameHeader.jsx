@@ -1,6 +1,6 @@
 import { useStore } from "./context/createFastContext";
 import { useTile } from "./hooks/useTile";
-import { STAGE_MAPS } from "./lib/constants";
+import { STAGE_MAPS, initialGold } from "./lib/constants";
 
 export function GameHeader({
   clock,
@@ -26,7 +26,7 @@ export function GameHeader({
       stages: STAGE_MAPS,
       towers: [],
       path: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
-      gold: 500,
+      gold: initialGold,
     });
   }
   return (
@@ -68,7 +68,14 @@ export function GameHeader({
             Change Stage
           </button>
         </div>
-        <div>Path: {JSON.stringify(path.map((p) => p.id))}</div>
+        <div>
+          Path:{" "}
+          {JSON.stringify(
+            path.map((p) => p.id),
+            null,
+            2
+          )}
+        </div>
       </div>
     </div>
   );
