@@ -48,6 +48,7 @@ export default function createFastContext(initialState) {
       throw new Error("Store not found!");
     }
 
+    // console.log(useStoreData().get());
     // const [state, setState] = useState(() => selector(store.get()));
     // useEffect(() => {
     //   return store.subscribe(() => setState(selector(store.get())));
@@ -67,4 +68,13 @@ export const { Provider: GameProvider, useStore } = createFastContext({
   waveNumber: 0,
   currentWave: null,
   stages: STAGE_MAPS,
+  path: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
 });
+
+// console.log({
+//   stageNumber: 0,
+//   waveNumber: 0,
+//   currentWave: null,
+//   stages: STAGE_MAPS,
+//   path: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
+// });

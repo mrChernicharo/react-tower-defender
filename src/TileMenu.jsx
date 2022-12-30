@@ -14,6 +14,7 @@ export default function TileMenu() {
   const { selectedTileId } = useTile();
 
   const [stages, setStore] = useStore((store) => store.stages);
+  const [path] = useStore((store) => store.path);
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
   const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
@@ -52,6 +53,7 @@ export default function TileMenu() {
     setStore({
       currentWave: updateCurrentWave(newTile),
       stages: getUpdatedTiles(newTile),
+      path: [...path, newTile],
     });
   }
 
