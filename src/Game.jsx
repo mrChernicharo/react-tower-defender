@@ -9,7 +9,7 @@ import {
 import { GameHeader } from "./GameHeader";
 import { useGameLoop } from "./hooks/useGameLoop";
 import { useTile } from "./hooks/useTile";
-import TileMenu from "./TileMenu";
+import TileMenu from "./components/TileMenu/TileMenu";
 import Tiles from "./Tiles";
 import Enemies from "./Enemies";
 // import { useStageMaps } from "./hooks/useStageMaps";
