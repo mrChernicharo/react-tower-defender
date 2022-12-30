@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useSyncExternalStore, // meant to subscribe to a dataSource
 } from "react";
+import { STAGE_MAPS } from "../lib/constants";
 
 export default function createFastContext(initialState) {
   function useStoreData() {
@@ -60,3 +61,10 @@ export default function createFastContext(initialState) {
 
   return { Provider, useStore };
 }
+
+export const { Provider: GameProvider, useStore } = createFastContext({
+  stageNumber: 0,
+  waveNumber: 0,
+  currentWave: null,
+  stages: STAGE_MAPS,
+});

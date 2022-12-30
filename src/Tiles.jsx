@@ -1,6 +1,4 @@
-import { useStore } from "./App";
-import createFastContext from "./context/createFastContext";
-// import { useStageMaps } from "./hooks/useStageMaps";
+import { useStore } from "./context/createFastContext";
 import { useTile } from "./hooks/useTile";
 import {
   HIGHLIGHTED_TILE_COLORS,
@@ -8,17 +6,27 @@ import {
   TILE_COLORS,
   TILE_SIZE,
 } from "./lib/constants";
+import { getGridHeight, getGridWidth } from "./lib/helpers";
 const pathIcon = "⛏";
 
 export default function Tiles() {
   const { selectedTileId } = useTile();
 
-  const [stages] = useStore((store) => store.stages);
   const [stageNumber] = useStore((store) => store.stageNumber);
+  const [currentWave] = useStore((store) => store.currentWave);
+  const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
+  const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
+
+  const gridWidth = getGridWidth(tiles);
+  const gridHeight = getGridHeight(tiles);
+
+  const firstWaveRow = gridHeight - waveCount;
+
+  // console.log({ gridWidth, gridHeight, waveCount, firstWaveRow, currentWave });
 
   return (
     <>
-      {stages[stageNumber].tiles.map(({ id, x, y, type }) => (
+      {tiles.map(({ id, x, y, type, startingPoint = false }) => (
         <g key={`tile-${id}`}>
           <rect
             className="tile"
@@ -34,7 +42,17 @@ export default function Tiles() {
             y={y * TILE_SIZE + 50}
             width={TILE_SIZE}
             height={TILE_SIZE}
+            opacity={y > firstWaveRow + currentWave ? 0.3 : 1}
           />
+          {startingPoint ? (
+            <rect
+              width={TILE_SIZE / 2}
+              height={10}
+              fill="red"
+              x={x * TILE_SIZE + 74}
+              y={y * TILE_SIZE + 50}
+            />
+          ) : null}
           {/* {type === "path" ? (
             <text fontSize={32} x={x * TILE_SIZE + 85} y={y * TILE_SIZE + 110}>
               {pathIcon}

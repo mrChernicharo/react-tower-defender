@@ -38,7 +38,6 @@ export function useTile() {
     }
 
     if (clickedTile) {
-      console.log("clicked tile");
       // clicked same tile
       if (e.target.id === selectedTileId) {
         return setSelectedTileId(null);

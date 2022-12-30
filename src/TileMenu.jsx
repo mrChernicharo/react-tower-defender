@@ -1,5 +1,4 @@
-import { useStore } from "./App";
-// import { useStageMaps } from "./hooks/useStageMaps";
+import { useStore } from "./context/createFastContext";
 import { useTile } from "./hooks/useTile";
 import {
   HIGHLIGHTED_TILE_COLORS,
@@ -9,31 +8,50 @@ import {
   TILE_SIZE,
   towerIcons,
 } from "./lib/constants";
+import { getGridHeight, getGridWidth } from "./lib/helpers";
 
 export default function TileMenu() {
   const { selectedTileId } = useTile();
 
   const [stages, setStore] = useStore((store) => store.stages);
   const [stageNumber] = useStore((store) => store.stageNumber);
+  const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
+  const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
+
+  const gridWidth = getGridWidth(tiles);
+  const gridHeight = getGridHeight(tiles);
+
+  const firstWaveRow = gridHeight - waveCount;
 
   function canBecomePath(tile) {
     return tile.type === "grass";
   }
 
+  function updateCurrentWave(tile) {
+    const barrierBroken = tile.y > firstWaveRow;
+    const wave = barrierBroken ? tile.y - firstWaveRow : null;
+    console.log(barrierBroken ? `CALL WAVE ${wave}!` : "");
+    return wave;
+  }
+
+  function getUpdatedTiles(newTile) {
+    return {
+      ...stages,
+      [stageNumber]: {
+        ...stages[stageNumber],
+        tiles: [...stages[stageNumber].tiles].map((t) =>
+          t.id === newTile.id ? newTile : t
+        ),
+      },
+    };
+  }
+
   function createNewPath(tile) {
     console.log("createNewPath", tile);
-    // TODO: We need to have our tiles in memory
     const newTile = { ...tile, type: "path" };
     setStore({
-      stages: {
-        ...stages,
-        [stageNumber]: {
-          ...stages[stageNumber],
-          tiles: [...stages[stageNumber].tiles].map((t) =>
-            t.id === newTile.id ? newTile : t
-          ),
-        },
-      },
+      currentWave: updateCurrentWave(newTile),
+      stages: getUpdatedTiles(newTile),
     });
   }
 
@@ -115,9 +133,9 @@ export default function TileMenu() {
         />
         {pathIcons.map(({ id, name, tx, ty, fill, icon }) => {
           const adjacentTile = getAdjacentTile(name);
-          const isBuildable = adjacentTile && canBecomePath(adjacentTile);
+          const isBuildableAdj = adjacentTile && canBecomePath(adjacentTile);
 
-          if (!isBuildable) return null;
+          if (!isBuildableAdj) return null;
 
           return (
             <g key={id}>

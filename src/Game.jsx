@@ -13,7 +13,7 @@ import TileMenu from "./TileMenu";
 import Tiles from "./Tiles";
 import Enemies from "./Enemies";
 // import { useStageMaps } from "./hooks/useStageMaps";
-import { useStore } from "./App";
+import { useStore } from "./context/createFastContext";
 
 export function Game() {
   const movement = 20; // 20px/sec
@@ -25,8 +25,16 @@ export function Game() {
     });
   }
 
-  const { selectedTileId } = useTile();
+  function handleChangeStage() {
+    const nextStage =
+      stageNumber === Object.keys(STAGE_MAPS).length - 1 ? 0 : stageNumber + 1;
 
+    // reset tiles and currentWave
+    setStore({ currentWave: null, stageNumber: nextStage, stages: STAGE_MAPS });
+  }
+
+  const { selectedTileId } = useTile();
+  const [currentWave] = useStore((store) => store.currentWave);
   const [stageNumber, setStore] = useStore((store) => store.stageNumber);
 
   const { clock, playing, speed, pause, play, toggleSpeed } =
@@ -43,14 +51,13 @@ export function Game() {
         toggleSpeed={toggleSpeed}
       />
 
-      <div>Stage : {stageNumber}</div>
-      <div>Selected Tile: {selectedTileId}</div>
+      <div className="flex justify-around">
+        <div>Stage : {stageNumber}</div>
+        <div>Selected Tile: {selectedTileId}</div>
+        <div>Wave: {currentWave}</div>
+      </div>
       {/* <div>yPos: {circleY.toFixed(1)}</div> */}
-      <button
-        onClick={() => {
-          setStore({ stageNumber: stageNumber === 1 ? 0 : 1 });
-        }}
-      >
+      <button className="btn" onClick={handleChangeStage}>
         Change Stage
       </button>
 
@@ -58,7 +65,7 @@ export function Game() {
         <g id="stage-map-g">
           <Tiles />
           <TileMenu />
-          <Enemies circleY={circleY} />
+          {/* <Enemies circleY={circleY} /> */}
         </g>
       </svg>
     </div>
