@@ -190,6 +190,46 @@ export const STAGE_MAPS = {
   },
 };
 
+export const TOWERS = {
+  fire : {
+    name: 'fire',
+    damage: 50,
+    range: 200,
+    rate_of_fire: 2,
+    xp: 0,
+    fill: "red",
+    price: 100
+  },
+  ice: {
+    name: 'ice',
+    damage: 40,
+    range: 150,
+    rate_of_fire: 3,
+    xp: 0,
+    fill: "blue",
+    price: 80
+  },
+  lightning: {
+    name: 'lightning',
+    damage: 60,
+    range: 250,
+    rate_of_fire: 1,
+    xp: 0,
+    fill: "yellow",
+    price: 120
+  },
+  earth: {
+    name: 'earth',
+    damage: 30,
+    range: 100,
+    rate_of_fire: 4,
+    xp: 0,
+    fill: "brown",
+    price: 60
+  
+  }
+}
+
 export const towerIcons = [
   {
     id: 1,

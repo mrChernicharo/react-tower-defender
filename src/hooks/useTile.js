@@ -22,6 +22,8 @@ export function useTile() {
 
     const clickedTile = e.target.dataset?.name?.includes("tile");
     const clickedTowerIcon = e.target.dataset?.name?.includes("tower-icon");
+    const clickedCreateTowerIcon =
+      e.target.dataset?.name?.includes("tower-confirm-icon");
     const clickedPathIcon = e.target.dataset?.name?.includes("path-icon");
     const clickedSelectInnerRing =
       e.target.dataset?.name?.includes("select-ring-inner");
@@ -31,7 +33,17 @@ export function useTile() {
       return setSelectedTileId(null);
     }
 
-    if (clickedTowerIcon || clickedPathIcon) {
+    if (clickedTowerIcon) {
+      console.log(`clicked ${e.target.dataset.name}`);
+      return;
+    }
+
+    // if (clickedCreateTowerIcon) {
+    //   console.log(`clickedCreateTowerIcon ${e.target.dataset.name}`);
+    //   return setTimeout(() => setSelectedTileId(null), 0);
+    // }
+
+    if (clickedPathIcon) {
       console.log(`clicked ${e.target.dataset.name}`);
       setTimeout(() => setSelectedTileId(null), 0);
       return;

@@ -68,7 +68,9 @@ export const { Provider: GameProvider, useStore } = createFastContext({
   waveNumber: 0,
   currentWave: null,
   stages: STAGE_MAPS,
+  towers: [],
   path: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
+  gold: 500,
 });
 
 // console.log({
