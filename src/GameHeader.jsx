@@ -13,7 +13,7 @@ export function GameHeader({
   const { selectedTileId } = useClick();
   const [currentWave] = useStore((store) => store.currentWave);
   const [stageNumber, setStore] = useStore((store) => store.stageNumber);
-  const [path] = useStore((store) => store.path);
+  const tileChain = useStore((store) => store.tileChain);
   const [gold] = useStore((store) => store.gold);
   function handleChangeStage() {
     const nextStage =
@@ -25,7 +25,7 @@ export function GameHeader({
       stageNumber: nextStage,
       stages: STAGE_MAPS,
       towers: [],
-      path: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
+      tileChain: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
       gold: initialGold,
     });
   }
@@ -69,9 +69,9 @@ export function GameHeader({
           </button>
         </div>
         <div>
-          Path:{" "}
+          tileChain{" "}
           {JSON.stringify(
-            path.map((p) => p.id),
+            tileChain.map((p) => p.id),
             null,
             2
           )}

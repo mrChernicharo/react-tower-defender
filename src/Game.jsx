@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   HIGHLIGHTED_TILE_COLORS,
   STAGE_MAPS,
@@ -18,12 +18,11 @@ import EnemyPath from "./EnemyPath";
 
 export function Game() {
   const movement = 20; // 20px/sec
-  const [circleY, setCircleY] = useState(0);
+  const circleY = useRef(0);
 
   function handleGameLoop(timeDiff) {
-    setCircleY((prev) => {
-      return prev + timeDiff * movement;
-    });
+    console.log(circleY);
+    circleY.current = circleY.current + timeDiff * movement;
   }
 
   const { clock, playing, speed, pause, play, toggleSpeed } =
@@ -45,7 +44,7 @@ export function Game() {
           <Tiles />
           <TileMenu />
           <EnemyPath />
-          <Enemies circleY={circleY} />
+          {/* <Enemies circleY={circleY} /> */}
         </g>
       </svg>
     </div>

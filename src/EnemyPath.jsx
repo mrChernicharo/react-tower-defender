@@ -1,10 +1,15 @@
+import { useRef } from "react";
 import { useStore } from "./context/createFastContext";
 import { TILE_SIZE } from "./lib/constants";
 
 export default function EnemyPath() {
-  const [path] = useStore((store) => store.path);
+  const leftPathRef = useRef(null);
+  const centerPathRef = useRef(null);
+  const rightPathRef = useRef(null);
 
-  const paths = path.reduce(
+  const [tileChain] = useStore((store) => store.tileChain);
+
+  const paths = tileChain.reduce(
     (acc, tile) => {
       acc.left.push(tile.exits.left);
       acc.center.push(tile.exits.center);
@@ -17,7 +22,6 @@ export default function EnemyPath() {
       right: [],
     }
   );
-  console.log(path, paths);
 
   function createPath(points) {
     let d = "";
@@ -46,11 +50,14 @@ export default function EnemyPath() {
             if (prevPos.x > pos.x) sweep = "0";
           }
           d += ` A 75 75 0 0 ${sweep} 
-          ${pos.x * TILE_SIZE} ${pos.y * TILE_SIZE}`;
+        ${pos.x * TILE_SIZE} ${pos.y * TILE_SIZE}`;
         }
       }
       prevPos = pos;
     }
+
+    // const d2d = new Path2D(d);
+
     return d;
   }
 
@@ -59,11 +66,13 @@ export default function EnemyPath() {
   cd = createPath(paths.center);
   rd = createPath(paths.right);
 
+  // console.log(tileChain, paths, ld, cd, rd);
+
   return (
     <>
       {/* TILE EXITS */}
       <g transform="translate(50,50)">
-        {/* {path.map((tile) => {
+        {tileChain.map((tile) => {
           const { id, exits } = tile;
           return (
             <g key={id}>
@@ -78,12 +87,50 @@ export default function EnemyPath() {
               ))}
             </g>
           );
-        })} */}
+        })}
 
-        <path d={ld} strokeWidth={3} stroke="#ddd" fill="none" />
-        <path d={cd} strokeWidth={3} stroke="#ddd" fill="none" />
-        <path d={rd} strokeWidth={3} stroke="#ddd" fill="none" />
+        <path
+          ref={leftPathRef}
+          d={ld}
+          strokeWidth={3}
+          stroke="#ddd"
+          fill="none"
+          // onMouseOver={handleMouseOver}
+        />
+        <path
+          ref={centerPathRef}
+          d={cd}
+          strokeWidth={3}
+          stroke="#ddd"
+          fill="none"
+        />
+        <path
+          ref={rightPathRef}
+          d={rd}
+          strokeWidth={3}
+          stroke="#ddd"
+          fill="none"
+        />
       </g>
     </>
   );
 }
+
+// function handleMouseOver(e) {
+//   const leftPathLen = leftPathRef.current?.getTotalLength();
+//   const centerPathLen = centerPathRef.current?.getTotalLength();
+//   const rightPathLen = rightPathRef.current?.getTotalLength();
+
+//   console.log({
+//     e,
+//     leftPathLen,
+//     centerPathLen,
+//     rightPathLen,
+//     ll: leftPathRef.current?.getPointAtLength(leftPathLen),
+//     cl: centerPathRef.current?.getPointAtLength(centerPathLen),
+//     rl: rightPathRef.current?.getPointAtLength(rightPathLen),
+//     lh: leftPathRef.current?.getPointAtLength(leftPathLen / 2),
+//     ch: centerPathRef.current?.getPointAtLength(centerPathLen / 2),
+//     rh: rightPathRef.current?.getPointAtLength(rightPathLen / 2),
+//   });
+// }

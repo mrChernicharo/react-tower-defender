@@ -5,7 +5,7 @@ import { getGridHeight } from "../../lib/helpers";
 
 export default function PathMenu({ id, x, y, type }) {
   const [stages, setStore] = useStore((store) => store.stages);
-  const [path] = useStore((store) => store.path);
+  const [tileChain] = useStore((store) => store.tileChain);
   const [currentWave] = useStore((store) => store.currentWave);
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
@@ -35,7 +35,7 @@ export default function PathMenu({ id, x, y, type }) {
   }
 
   function getTileExits(tile) {
-    const prevTile = path.at(-1);
+    const prevTile = tileChain.at(-1);
 
     const left = { x: 0, y: 0 };
     const center = { x: 0, y: 0 };
@@ -90,7 +90,7 @@ export default function PathMenu({ id, x, y, type }) {
 
     setStore({
       stages: getUpdatedTiles(newTile),
-      path: [...path, newTile],
+      tileChain: [...tileChain, newTile],
       ...(barrierBroken && {
         currentWave: tile.y - firstWaveRow,
         inBattle: true,

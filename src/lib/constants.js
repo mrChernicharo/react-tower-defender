@@ -275,6 +275,22 @@ export const TOWERS = {
   },
 };
 
+const ENEMIES = {
+  goblin: {
+    name: 'goblin',
+    speed: 10,
+    hp: 100,
+    gold: 4
+  },
+  orc:
+  {
+    name: 'orc',
+    speed: 8,
+    hp: 200,
+    gold: 7
+  },
+}
+
 export const towerIcons = [
   {
     id: 1,

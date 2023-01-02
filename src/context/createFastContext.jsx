@@ -69,7 +69,16 @@ export const { Provider: GameProvider, useStore } = createFastContext({
   currentWave: null,
   stages: STAGE_MAPS,
   towers: [],
-  path: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
+  enemies: [],
+  tileChain: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
   gold: initialGold,
   inBattle: false,
 });
+
+// console.log({
+//   stageNumber: 0,
+//   waveNumber: 0,
+//   currentWave: null,
+//   stages: STAGE_MAPS,
+//   tileChain STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
+// });

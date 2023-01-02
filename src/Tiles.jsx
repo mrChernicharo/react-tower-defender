@@ -15,7 +15,7 @@ export default function Tiles() {
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [currentWave] = useStore((store) => store.currentWave);
   const [towers] = useStore((store) => store.towers);
-  const [path] = useStore((store) => store.path);
+  const tileChain = useStore((store) => store.tileChain);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
   const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
 
