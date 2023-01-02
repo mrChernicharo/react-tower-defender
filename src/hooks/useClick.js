@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useTile() {
+export function useClick() {
   const [selectedTileId, setSelectedTileId] = useState(null);
 
   function handleTileClick(e) {

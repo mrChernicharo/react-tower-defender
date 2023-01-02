@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Ring from "../../assets/Ring";
 import { useStore } from "../../context/createFastContext";
-import { useTile } from "../../hooks/useTile";
+import { useClick } from "../../hooks/useClick";
 import {
   TILE_SIZE,
   TOWERS,
@@ -10,7 +10,7 @@ import {
 } from "../../lib/constants";
 
 export default function TowerMenu({ id, x, y, type, hasTower }) {
-  const { selectedTileId } = useTile();
+  const { selectedTileId } = useClick();
   // console.log({ id, x, y, selectedTileId });
 
   const [towers, setStore] = useStore((store) => store.towers);

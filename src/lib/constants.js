@@ -22,7 +22,18 @@ export const STAGE_MAPS = {
     tiles: [
       { id: "0:0", x: 0, y: 0, type: "wall" },
       { id: "1:0", x: 1, y: 0, type: "grass" },
-      { id: "2:0", x: 2, y: 0, type: "path", startingPoint: true },
+      {
+        id: "2:0",
+        x: 2,
+        y: 0,
+        type: "path",
+        startingPoint: true,
+        exits: {
+          left: { x: 2.25, y: 0 },
+          center: { x: 2.5, y: 0 },
+          right: { x: 2.75, y: 0 },
+        },
+      },
       { id: "3:0", x: 3, y: 0, type: "grass" },
       { id: "4:0", x: 4, y: 0, type: "grass" },
       { id: "0:1", x: 0, y: 1, type: "wall" },
@@ -86,7 +97,18 @@ export const STAGE_MAPS = {
       { id: "1:0", x: 1, y: 0, type: "grass" },
       { id: "2:0", x: 2, y: 0, type: "grass" },
       { id: "3:0", x: 3, y: 0, type: "grass" },
-      { id: "4:0", x: 4, y: 0, type: "path", startingPoint: true },
+      {
+        id: "4:0",
+        x: 4,
+        y: 0,
+        type: "path",
+        startingPoint: true,
+        exits: {
+          left: { x: 4.25, y: 0 },
+          center: { x: 4.5, y: 0 },
+          right: { x: 4.75, y: 0 },
+        },
+      },
       { id: "0:1", x: 0, y: 1, type: "wall" },
       { id: "1:1", x: 1, y: 1, type: "wall" },
       { id: "2:1", x: 2, y: 1, type: "grass" },
@@ -145,7 +167,18 @@ export const STAGE_MAPS = {
     waveCount: 8,
     tiles: [
       { id: "0:0", x: 0, y: 0, type: "grass" },
-      { id: "1:0", x: 1, y: 0, type: "path", startingPoint: true },
+      {
+        id: "1:0",
+        x: 1,
+        y: 0,
+        type: "path",
+        startingPoint: true,
+        exits: {
+          left: { x: 1.25, y: 0 },
+          center: { x: 1.5, y: 0 },
+          right: { x: 1.75, y: 0 },
+        },
+      },
       { id: "2:0", x: 2, y: 0, type: "grass" },
       { id: "3:0", x: 3, y: 0, type: "grass" },
       { id: "0:1", x: 0, y: 1, type: "grass" },
@@ -192,45 +225,55 @@ export const STAGE_MAPS = {
   },
 };
 
+// console.log(
+//   JSON.stringify(Object.keys(STAGE_MAPS).map((k) => ({
+//     ...STAGE_MAPS[k],
+//     tiles: STAGE_MAPS[k].tiles.map((t) => ({
+//       ...t,
+//       x: t.x * TILE_SIZE,
+//       y: t.y * TILE_SIZE,
+//     })),
+//   })))
+// );
+
 export const TOWERS = {
-  fire : {
-    name: 'fire',
+  fire: {
+    name: "fire",
     damage: 50,
     range: 200,
     rate_of_fire: 2,
     xp: 0,
     fill: "red",
-    price: 100
+    price: 100,
   },
   ice: {
-    name: 'ice',
+    name: "ice",
     damage: 40,
     range: 150,
     rate_of_fire: 3,
     xp: 0,
     fill: "blue",
-    price: 80
+    price: 80,
   },
   lightning: {
-    name: 'lightning',
+    name: "lightning",
     damage: 60,
     range: 250,
     rate_of_fire: 1,
     xp: 0,
     fill: "yellow",
-    price: 120
+    price: 120,
   },
   earth: {
-    name: 'earth',
+    name: "earth",
     damage: 30,
     range: 100,
     rate_of_fire: 4,
     xp: 0,
     fill: "brown",
-    price: 60
-  
-  }
-}
+    price: 60,
+  },
+};
 
 export const towerIcons = [
   {

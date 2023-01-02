@@ -8,7 +8,7 @@ import {
 } from "./lib/constants";
 import { GameHeader } from "./GameHeader";
 import { useGameLoop } from "./hooks/useGameLoop";
-import { useTile } from "./hooks/useTile";
+import { useClick } from "./hooks/useClick";
 import TileMenu from "./components/TileMenu/TileMenu";
 import Tiles from "./Tiles";
 import Enemies from "./Enemies";

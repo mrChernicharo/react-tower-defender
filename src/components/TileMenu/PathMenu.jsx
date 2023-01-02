@@ -34,17 +34,62 @@ export default function PathMenu({ id, x, y, type }) {
     };
   }
 
+  function getTileExits(tile) {
+    const prevTile = path.at(-1);
+
+    const left = { x: 0, y: 0 };
+    const center = { x: 0, y: 0 };
+    const right = { x: 0, y: 0 };
+
+    // newTile beneath
+    if (prevTile.y < tile.y) {
+      console.log("new below");
+      left.x = tile.x + 0.25;
+      left.y = tile.y;
+      center.x = tile.x + 0.5;
+      center.y = tile.y;
+      right.x = tile.x + 0.75;
+      right.y = tile.y;
+    }
+
+    // newTile to the left
+    if (prevTile.x > tile.x) {
+      console.log("new to the left");
+      left.x = tile.x + 1;
+      left.y = tile.y + 0.25;
+      center.x = tile.x + 1;
+      center.y = tile.y + 0.5;
+      right.x = tile.x + 1;
+      right.y = tile.y + 0.75;
+    }
+
+    // newTile to the right
+    if (prevTile.x < tile.x) {
+      console.log("new to the right");
+      left.x = tile.x;
+      left.y = tile.y + 0.75;
+      center.x = tile.x;
+      center.y = tile.y + 0.5;
+      right.x = tile.x;
+      right.y = tile.y + 0.25;
+    }
+    return { left, center, right };
+  }
+
   function createNewPath(tile) {
-    console.log("createNewPath", tile);
+    // console.log("createNewPath", tile, path);
 
     const barrierBroken = tile.y > firstWaveRow + currentWave;
     if (barrierBroken) {
       console.log(`CALL WAVE ${tile.y - firstWaveRow}!`);
     }
 
+    console.log(getTileExits(tile));
+
     const newTile = {
       ...tile,
       type: "path",
+      exits: getTileExits(tile),
       ...(barrierBroken && { enemyEntrance: true }),
     };
 
@@ -56,6 +101,8 @@ export default function PathMenu({ id, x, y, type }) {
         inBattle: true,
       }),
     });
+
+    console.log("createNewPath", [...path, newTile]);
   }
 
   function getAdjacentTile(direction) {

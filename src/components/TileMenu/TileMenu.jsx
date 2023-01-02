@@ -1,10 +1,10 @@
 import { useStore } from "../../context/createFastContext";
-import { useTile } from "../../hooks/useTile";
+import { useClick } from "../../hooks/useClick";
 import PathMenu from "./PathMenu";
 import TowerMenu from "./TowerMenu";
 
 export default function TileMenu() {
-  const { selectedTileId } = useTile();
+  const { selectedTileId } = useClick();
 
   const [stages] = useStore((store) => store.stages);
   const [stageNumber] = useStore((store) => store.stageNumber);

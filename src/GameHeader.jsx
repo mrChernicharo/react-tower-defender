@@ -1,5 +1,5 @@
 import { useStore } from "./context/createFastContext";
-import { useTile } from "./hooks/useTile";
+import { useClick } from "./hooks/useClick";
 import { STAGE_MAPS, initialGold } from "./lib/constants";
 
 export function GameHeader({
@@ -10,7 +10,7 @@ export function GameHeader({
   play,
   toggleSpeed,
 }) {
-  const { selectedTileId } = useTile();
+  const { selectedTileId } = useClick();
   const [currentWave] = useStore((store) => store.currentWave);
   const [stageNumber, setStore] = useStore((store) => store.stageNumber);
   const [path] = useStore((store) => store.path);
