@@ -3,10 +3,18 @@ import { useStore } from "../../context/createFastContext";
 import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../lib/constants";
 import { getGridHeight } from "../../lib/helpers";
 
-export default function PathMenu({ id, x, y, type, updateLoop }) {
+export default function PathMenu({
+  id,
+  x,
+  y,
+  type,
+  updateLoop,
+  onPathTileCreated,
+  onWaveCalled,
+}) {
   const [stages, setStore] = useStore((store) => store.stages);
   const [tileChain] = useStore((store) => store.tileChain);
-  const [currentWave] = useStore((store) => store.currentWave);
+  const [waveNumber] = useStore((store) => store.waveNumber);
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
   const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
@@ -76,10 +84,7 @@ export default function PathMenu({ id, x, y, type, updateLoop }) {
   function createNewPath(tile) {
     // console.log("createNewPath", tile, path);
 
-    const barrierBroken = tile.y > firstWaveRow + currentWave;
-    if (barrierBroken) {
-      console.log(`CALL WAVE ${tile.y - firstWaveRow}!`);
-    }
+    const barrierBroken = tile.y > firstWaveRow + waveNumber;
 
     const newTile = {
       ...tile,
@@ -92,16 +97,17 @@ export default function PathMenu({ id, x, y, type, updateLoop }) {
       stages: getUpdatedTiles(newTile),
       tileChain: [...tileChain, newTile],
       ...(barrierBroken && {
-        currentWave: tile.y - firstWaveRow,
+        waveNumber: tile.y - firstWaveRow,
         inBattle: true,
       }),
     };
 
-    console.log({ payload });
+    onPathTileCreated(payload);
 
-    setStore(payload);
-    updateLoop();
-
+    if (barrierBroken) {
+      console.log(`CALL WAVE ${tile.y - firstWaveRow}!`);
+      onWaveCalled();
+    }
     // console.log("createNewPath", [...path, newTile]);
   }
 

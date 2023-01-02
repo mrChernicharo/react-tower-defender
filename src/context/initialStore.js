@@ -4,7 +4,7 @@ import { initialGold, STAGE_MAPS } from "../lib/constants";
 export const initialStore = {
   stageNumber: 0,
   waveNumber: 0,
-  currentWave: null,
+  waveNumber: null,
   stages: STAGE_MAPS,
   towers: [],
   enemies: [],

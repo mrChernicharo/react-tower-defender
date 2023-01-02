@@ -13,7 +13,7 @@ export default function Tiles() {
   const { selectedTileId } = useClick();
 
   const [stageNumber] = useStore((store) => store.stageNumber);
-  const [currentWave] = useStore((store) => store.currentWave);
+  const [waveNumber] = useStore((store) => store.waveNumber);
   const [towers] = useStore((store) => store.towers);
   // const [tileChain] = useStore((store) => store.tileChain);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
@@ -24,7 +24,7 @@ export default function Tiles() {
 
   const firstWaveRow = gridHeight - waveCount;
 
-  // console.log({ gridWidth, gridHeight, waveCount, firstWaveRow, currentWave });
+  // console.log({ gridWidth, gridHeight, waveCount, firstWaveRow, waveNumber });
   // console.log(tiles);
 
   return (
@@ -47,7 +47,7 @@ export default function Tiles() {
                 y={y * TILE_SIZE}
                 width={TILE_SIZE}
                 height={TILE_SIZE}
-                opacity={y > firstWaveRow + currentWave ? 0.3 : 1}
+                opacity={y > firstWaveRow + waveNumber ? 0.3 : 1}
               />
 
               {startingPoint ? (

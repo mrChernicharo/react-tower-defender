@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useStore } from "../../context/createFastContext";
 import { ENEMIES, TILE_SIZE } from "../../lib/constants";
 
@@ -13,30 +13,67 @@ export default function Enemies({ updateLoop }) {
       {
         name: "goblin",
         lane: "left",
+        delay: 0,
       },
       {
         name: "troll",
         lane: "center",
+        delay: 0,
       },
       {
         name: "orc",
         lane: "right",
+        delay: 2,
       },
       {
         name: "goblin",
         lane: "left",
+        delay: 2,
       },
       {
         name: "troll",
         lane: "center",
+        delay: 4,
       },
       {
         name: "orc",
         lane: "right",
+        delay: 4,
+      },
+      {
+        name: "goblin",
+        lane: "left",
+        delay: 6,
+      },
+      {
+        name: "goblin",
+        lane: "right",
+        delay: 8,
+      },
+      {
+        name: "goblin",
+        lane: "center",
+        delay: 10,
+      },
+      {
+        name: "troll",
+        lane: "right",
+        delay: 6,
+      },
+      {
+        name: "orc",
+        lane: "center",
+        delay: 7,
+      },
+      {
+        name: "orc",
+        lane: "right",
+        delay: 8,
       },
     ].map((e) => ({
       ...ENEMIES[e.name],
       lane: e.lane,
+      delay: e.delay,
       progress: 0,
       percProgress: 0,
       pos: {
@@ -50,14 +87,13 @@ export default function Enemies({ updateLoop }) {
 
   useEffect(() => {
     console.log({ inBattle });
-    if (inBattle) {
-      const waveEnemies = createEnemies();
-      console.log({ enemies: waveEnemies });
+    if (!inBattle) {
+    } else {
       setStore({
-        enemies: waveEnemies,
+        enemies: createEnemies(),
       });
+      updateLoop();
     }
-    updateLoop();
   }, [inBattle]);
 
   return (

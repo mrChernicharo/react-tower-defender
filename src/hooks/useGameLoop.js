@@ -30,9 +30,9 @@ export function useGameLoop(callback) {
 
     setGameSpeed(newSpeed);
 
-    if (playing) {
-      updateLoop()
-    }
+    // if (playing) {
+    updateLoop()
+    // }
   }
 
 

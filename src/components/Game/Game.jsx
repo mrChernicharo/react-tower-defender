@@ -18,27 +18,37 @@ import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 
 export function Game() {
+  const currClock = useRef(0);
   const [enemies, setStore] = useStore((store) => store.enemies);
+  const [waveNumber] = useStore((store) => store.waveNumber);
 
   const [lanePaths, setLanePaths] = useState(null);
+  const [wavesTimes, setWavesTimes] = useState({});
 
   const { clock, playing, gameSpeed, pause, play, updateLoop, toggleSpeed } =
     useGameLoop(handleGameLoop);
 
+  // tick already considers gameSpeed
   function handleGameLoop(tick) {
+    currClock.current = tick / 60;
+    const waveTime = currClock.current - wavesTimes[waveNumber].start;
+
+    // console.log({
+    //   tick,
+    //   waveTime: waveTime.toFixed(1),
+    //   currClock: currClock.current.toFixed(1),
+    //   //   clock: clock.toFixed(1),
+    // });
+
     // getUpdatedEnemies
-    // const waveStartTick = (clock * 60) / gameSpeed;
-    // const currClock = (tick / 60) * gameSpeed;
-    // const waveTime = currClock - clock;
     const updatedEnemies = [];
 
     for (const [i, e] of enemies.entries()) {
-      // console.log({
-      //   tick,
-      //   /**
-      //   clock, currClock,
-      // */ waveTime,
-      // });
+      e.name === "troll" && console.log(e.name, e.delay, waveTime);
+
+      if (waveTime < e.delay) {
+        continue;
+      }
 
       const enemyPath = lanePaths[e.lane];
       const endReached = e.percProgress > 100;
@@ -71,6 +81,13 @@ export function Game() {
         enemies: [],
         inBattle: false,
       });
+
+      const currWave = waveNumber || 1;
+      setWavesTimes((prev) => ({
+        ...prev,
+        [currWave]: { ...prev[currWave], end: currClock.current },
+      }));
+
       updateLoop();
     }
 
@@ -79,6 +96,10 @@ export function Game() {
       enemies: updatedEnemies,
     });
   }
+
+  useEffect(() => {
+    console.log({ wavesTimes });
+  }, [wavesTimes]);
 
   return (
     <div className="text-white bg-gray-800 min-h-screen text-center">
@@ -100,7 +121,22 @@ export function Game() {
             }}
           />
           <Enemies updateLoop={updateLoop} />
-          <TileMenu updateLoop={updateLoop} />
+          <TileMenu
+            updateLoop={updateLoop}
+            onWaveCalled={() => {
+              waveNumber
+                ? setWavesTimes((prev) => ({
+                    ...prev,
+                    [waveNumber + 1]: { ...prev[waveNumber + 1], start: clock },
+                  }))
+                : setWavesTimes({ 1: { start: clock } });
+
+              updateLoop();
+            }}
+            onPathTileCreated={(payload) => {
+              setStore(payload);
+            }}
+          />
         </g>
       </svg>
 

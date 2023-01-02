@@ -11,7 +11,7 @@ export function GameHeader({
   toggleSpeed,
 }) {
   const { selectedTileId } = useClick();
-  const [currentWave] = useStore((store) => store.currentWave);
+  const [waveNumber] = useStore((store) => store.waveNumber);
   const [stageNumber, setStore] = useStore((store) => store.stageNumber);
   const [tileChain] = useStore((store) => store.tileChain);
   const [gold] = useStore((store) => store.gold);
@@ -20,9 +20,9 @@ export function GameHeader({
     const nextStage =
       stageNumber === Object.keys(STAGE_MAPS).length - 1 ? 0 : stageNumber + 1;
 
-    // reset tiles and currentWave
+    // reset tiles and waveNumber
     setStore({
-      currentWave: null,
+      waveNumber: null,
       stageNumber: nextStage,
       stages: STAGE_MAPS,
       enemies: [],
@@ -68,7 +68,7 @@ export function GameHeader({
       <div className="grid grid-cols-3">
         <div>
           <div>Selected Tile: {selectedTileId}</div>
-          <div>Wave: {currentWave}</div>
+          <div>Wave: {waveNumber}</div>
           {/* <div>yPos: {circleY.toFixed(1)}</div> */}
         </div>
         <div>
