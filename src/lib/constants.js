@@ -282,6 +282,7 @@ export const ENEMIES = {
     hp: 100,
     gold: 4,
     fill: "forestgreen",
+    size: 5,
   },
   orc: {
     name: "orc",
@@ -289,6 +290,7 @@ export const ENEMIES = {
     hp: 200,
     gold: 7,
     fill: "darkgreen",
+    size: 7,
   },
   troll: {
     name: "troll",
@@ -296,6 +298,7 @@ export const ENEMIES = {
     hp: 1600,
     gold: 20,
     fill: "#041",
+    size: 10,
   },
 };
 

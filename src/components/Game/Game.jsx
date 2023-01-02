@@ -33,24 +33,14 @@ export function Game() {
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesTimes[waveNumber].start;
 
-    // console.log({
-    //   tick,
-    //   waveTime: waveTime.toFixed(1),
-    //   currClock: currClock.current.toFixed(1),
-    //   //   clock: clock.toFixed(1),
-    // });
-
     // getUpdatedEnemies
     const updatedEnemies = [];
-
     for (const [i, e] of enemies.entries()) {
-      e.name === "troll" && console.log(e.name, e.delay, waveTime);
-
+      // don't add enemy unless we're past it's delay time
       if (waveTime < e.delay) {
         continue;
       }
 
-      const enemyPath = lanePaths[e.lane];
       const endReached = e.percProgress > 100;
       const isAlive = e.hp > 0;
 
@@ -60,13 +50,14 @@ export function Game() {
         continue;
       }
 
-      // movement enemies
+      // compute some data...
+      const enemyPath = lanePaths[e.lane];
       const prog =
         enemyPath.length -
         (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.1));
-
       const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
 
+      // ...to update enemies' positions and progress
       e.percProgress = (prog / enemyPath.length) * 100;
       e.progress = prog;
       e.pos.x = nextPos.x + 50;
@@ -91,7 +82,7 @@ export function Game() {
       updateLoop();
     }
 
-    //
+    // update enemies
     setStore({
       enemies: updatedEnemies,
     });

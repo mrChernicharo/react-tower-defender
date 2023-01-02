@@ -9,7 +9,7 @@ export function useClick() {
     const clickedTower = e.target.classList.contains("tower");
     if (clickedTower) {
       const tileId = e.target.id.split("::")[0];
-      setSelectedTileId(tileId);
+      selectedTileId ? setSelectedTileId(null) : setSelectedTileId(tileId);
       // console.log("clicked tower, open menu!");
       return;
     }

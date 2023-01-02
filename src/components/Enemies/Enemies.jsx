@@ -57,7 +57,7 @@ export default function Enemies({ updateLoop }) {
       },
       {
         name: "troll",
-        lane: "right",
+        lane: "left",
         delay: 6,
       },
       {
@@ -69,6 +69,21 @@ export default function Enemies({ updateLoop }) {
         name: "orc",
         lane: "right",
         delay: 8,
+      },
+      {
+        name: "goblin",
+        lane: "left",
+        delay: 12,
+      },
+      {
+        name: "goblin",
+        lane: "right",
+        delay: 13,
+      },
+      {
+        name: "goblin",
+        lane: "right",
+        delay: 14,
       },
     ].map((e) => ({
       ...ENEMIES[e.name],
@@ -105,7 +120,7 @@ export default function Enemies({ updateLoop }) {
               key={`${e.name}::${i}`}
               data-name="enemy"
               fill={e.fill}
-              r={10}
+              r={e.size}
               cx={e.pos.x}
               cy={e.pos.y}
             />

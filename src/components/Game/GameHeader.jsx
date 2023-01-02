@@ -29,6 +29,7 @@ export function GameHeader({
       towers: [],
       tileChain: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
       gold: initialGold,
+      inBattle: false,
     });
   }
 
