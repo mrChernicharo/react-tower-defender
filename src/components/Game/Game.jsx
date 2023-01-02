@@ -24,6 +24,9 @@ export function Game() {
 
   const [lanePaths, setLanePaths] = useState(null);
 
+  const { clock, playing, speed, pause, play, updateLoop, toggleSpeed } =
+    useGameLoop(handleGameLoop);
+
   function handleGameLoop(timeDiff) {
     // console.log({
     //   lanePaths,
@@ -32,7 +35,8 @@ export function Game() {
     for (const [i, e] of enemies.entries()) {
       const enemyPath = lanePaths[e.lane];
       const prog =
-        enemyPath.length - (enemyPath.length - (e.progress + e.speed * 0.1));
+        enemyPath.length -
+        (enemyPath.length - (e.progress + e.speed * speed * 0.1));
       const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
 
       e.progress = prog;
@@ -83,9 +87,6 @@ export function Game() {
     updateLoop();
   }
 
-  const { clock, playing, speed, pause, play, updateLoop, toggleSpeed } =
-    useGameLoop(handleGameLoop);
-
   useEffect(() => {
     console.log(tileChain);
 
@@ -112,9 +113,8 @@ export function Game() {
           <TileMenu />
           <EnemyPath
             onPathChanged={(paths) => {
-              const getPathObjects = (path) => {
+              const createLaneObj = (path) => {
                 return {
-                  el: { ...path },
                   length: path.getTotalLength(),
                   start: path.getPointAtLength(path.getTotalLength()),
                   end: path.getPointAtLength(0),
@@ -123,16 +123,15 @@ export function Game() {
                   },
                 };
               };
-
-              const p = {
-                left: getPathObjects(paths[0]),
-                center: getPathObjects(paths[1]),
-                right: getPathObjects(paths[2]),
+              const lanesInfo = {
+                left: createLaneObj(paths[0]),
+                center: createLaneObj(paths[1]),
+                right: createLaneObj(paths[2]),
               };
 
               console.log("onPathChanged", paths, p);
 
-              setLanePaths(p);
+              setLanePaths(lanesInfo);
             }}
           />
           <Enemies />
