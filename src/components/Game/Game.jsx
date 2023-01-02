@@ -22,30 +22,65 @@ export function Game() {
   const [tileChain] = useStore((store) => store.tileChain);
   const [inBattle, setStore] = useStore((store) => store.inBattle);
 
-  function handleGameLoop(timeDiff) {
-    // console.log(enemies);
-    const firstDot = (enemy) => {
-      const dot = tileChain.at(-1).exits[enemy.lane];
-      return { x: dot.x * TILE_SIZE + 50, y: dot.y * TILE_SIZE + 50 };
-    };
-    const updatedEnemies = [];
+  const [lanePaths, setLanePaths] = useState(null);
 
-    for (const e of enemies) {
-      if (e.pos.y > firstDot(e).y) {
-        if (e.pos.x < firstDot(e).x) {
-          e.pos.x = e.pos.x + e.speed * 0.01;
-        }
-        if (e.pos.x > firstDot(e).x) {
-          e.pos.x = e.pos.x - e.speed * 0.01;
-        }
-      }
-      e.pos.y = e.pos.y - e.speed * 0.01;
+  function handleGameLoop(timeDiff) {
+    // console.log({
+    //   lanePaths,
+    // });
+    const updatedEnemies = [];
+    for (const [i, e] of enemies.entries()) {
+      const enemyPath = lanePaths[e.lane];
+      const prog =
+        enemyPath.length - (enemyPath.length - (e.progress + e.speed * 0.1));
+      const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
+
+      e.progress = prog;
+      e.pos.x = nextPos.x + 50;
+      e.pos.y = nextPos.y + 50;
       updatedEnemies.push(e);
     }
+
     setStore({
       enemies: updatedEnemies,
     });
-    // circleY.current = circleY.current + timeDiff * movement;
+  }
+
+  function createEnemies() {
+    const enemiesEntrypoint = tileChain.at(-1);
+
+    setStore({
+      enemies: [
+        {
+          ...ENEMIES.goblin,
+          lane: "left",
+          progress: 0,
+          pos: {
+            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+          },
+        },
+        {
+          ...ENEMIES.goblin,
+          lane: "center",
+          progress: 0,
+          pos: {
+            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+          },
+        },
+        {
+          ...ENEMIES.orc,
+          lane: "right",
+          progress: 0,
+          pos: {
+            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+          },
+        },
+      ],
+    });
+    updateLoop();
   }
 
   const { clock, playing, speed, pause, play, updateLoop, toggleSpeed } =
@@ -53,38 +88,9 @@ export function Game() {
 
   useEffect(() => {
     console.log(tileChain);
-    const enemiesEntrypoint = tileChain.at(-1);
 
     if (inBattle) {
-      setStore({
-        enemies: [
-          {
-            ...ENEMIES.goblin,
-            lane: "left",
-            pos: {
-              x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-              y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-            },
-          },
-          {
-            ...ENEMIES.goblin,
-            lane: "center",
-            pos: {
-              x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-              y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-            },
-          },
-          {
-            ...ENEMIES.orc,
-            lane: "right",
-            pos: {
-              x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-              y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-            },
-          },
-        ],
-      });
-      updateLoop();
+      createEnemies();
     }
   }, [inBattle]);
 
@@ -106,7 +112,27 @@ export function Game() {
           <TileMenu />
           <EnemyPath
             onPathChanged={(paths) => {
-              console.log("onPathChanged", paths);
+              const getPathObjects = (path) => {
+                return {
+                  el: { ...path },
+                  length: path.getTotalLength(),
+                  start: path.getPointAtLength(path.getTotalLength()),
+                  end: path.getPointAtLength(0),
+                  getPointAtLength(val) {
+                    return path.getPointAtLength(val);
+                  },
+                };
+              };
+
+              const p = {
+                left: getPathObjects(paths[0]),
+                center: getPathObjects(paths[1]),
+                right: getPathObjects(paths[2]),
+              };
+
+              console.log("onPathChanged", paths, p);
+
+              setLanePaths(p);
             }}
           />
           <Enemies />

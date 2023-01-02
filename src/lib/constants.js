@@ -282,7 +282,6 @@ export const ENEMIES = {
     hp: 100,
     gold: 4,
     fill: "forestgreen",
-
   },
   orc: {
     name: "orc",
