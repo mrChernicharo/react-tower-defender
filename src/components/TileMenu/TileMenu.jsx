@@ -3,7 +3,7 @@ import { useClick } from "../../hooks/useClick";
 import PathMenu from "./PathMenu";
 import TowerMenu from "./TowerMenu";
 
-export default function TileMenu() {
+export default function TileMenu({ updateLoop }) {
   const { selectedTileId } = useClick();
 
   const [stages] = useStore((store) => store.stages);
@@ -18,7 +18,7 @@ export default function TileMenu() {
 
   const tileMenus = {
     grass: <TowerMenu id={id} x={x} y={y} type={type} hasTower={hasTower} />,
-    path: <PathMenu id={id} x={x} y={y} type={type} />,
+    path: <PathMenu id={id} x={x} y={y} type={type} updateLoop={updateLoop} />,
     mud: <g></g>,
   };
 

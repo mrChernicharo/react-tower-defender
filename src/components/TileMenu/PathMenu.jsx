@@ -3,7 +3,7 @@ import { useStore } from "../../context/createFastContext";
 import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../lib/constants";
 import { getGridHeight } from "../../lib/helpers";
 
-export default function PathMenu({ id, x, y, type }) {
+export default function PathMenu({ id, x, y, type, updateLoop }) {
   const [stages, setStore] = useStore((store) => store.stages);
   const [tileChain] = useStore((store) => store.tileChain);
   const [currentWave] = useStore((store) => store.currentWave);
@@ -91,17 +91,16 @@ export default function PathMenu({ id, x, y, type }) {
     const payload = {
       stages: getUpdatedTiles(newTile),
       tileChain: [...tileChain, newTile],
-      ...(barrierBroken
-        ? {
-            currentWave: tile.y - firstWaveRow,
-            inBattle: true,
-          }
-        : { enemies: [], inBattle: false }),
+      ...(barrierBroken && {
+        currentWave: tile.y - firstWaveRow,
+        inBattle: true,
+      }),
     };
 
-    console.log(payload);
+    console.log({ payload });
 
     setStore(payload);
+    updateLoop();
 
     // console.log("createNewPath", [...path, newTile]);
   }

@@ -9,62 +9,65 @@ export default function Enemies({ updateLoop }) {
 
   function createEnemies() {
     const enemiesEntrypoint = tileChain.at(-1);
+    const waveEnemies = [
+      {
+        ...ENEMIES.goblin,
+        lane: "left",
+        progress: 0,
+        pos: {
+          x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+          y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+        },
+      },
+      {
+        ...ENEMIES.troll,
+        lane: "center",
+        progress: 0,
+        pos: {
+          x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+          y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+        },
+      },
+      {
+        ...ENEMIES.orc,
+        lane: "right",
+        progress: 0,
+        pos: {
+          x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+          y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+        },
+      },
+    ];
 
-    setStore({
-      enemies: [
-        {
-          ...ENEMIES.goblin,
-          lane: "left",
-          progress: 0,
-          pos: {
-            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-          },
-        },
-        {
-          ...ENEMIES.troll,
-          lane: "center",
-          progress: 0,
-          pos: {
-            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-          },
-        },
-        {
-          ...ENEMIES.orc,
-          lane: "right",
-          progress: 0,
-          pos: {
-            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-          },
-        },
-      ],
-    });
-
-    updateLoop();
+    return waveEnemies;
   }
 
   useEffect(() => {
     console.log({ inBattle });
     if (inBattle) {
-      createEnemies();
+      const waveEnemies = createEnemies();
+      console.log({ enemies: waveEnemies });
+      setStore({
+        enemies: waveEnemies,
+      });
     }
+    updateLoop();
   }, [inBattle]);
   return (
     <>
-      {enemies.map((e, i) => {
-        return (
-          <circle
-            key={`${e.name}::${i}`}
-            data-name="enemy"
-            fill={e.fill}
-            r={10}
-            cx={e.pos.x}
-            cy={e.pos.y}
-          />
-        );
-      })}
+      {inBattle &&
+        enemies.map((e, i) => {
+          return (
+            <circle
+              key={`${e.name}::${i}`}
+              data-name="enemy"
+              fill={e.fill}
+              r={10}
+              cx={e.pos.x}
+              cy={e.pos.y}
+            />
+          );
+        })}
     </>
   );
 }

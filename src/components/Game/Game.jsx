@@ -61,9 +61,7 @@ export function Game() {
         inBattle: false,
       });
 
-      setTimeout(() => {
-        updateLoop();
-      }, 100);
+      updateLoop();
     }
 
     setStore({
@@ -91,7 +89,7 @@ export function Game() {
             }}
           />
           <Enemies updateLoop={updateLoop} />
-          <TileMenu />
+          <TileMenu updateLoop={updateLoop} />
         </g>
       </svg>
 

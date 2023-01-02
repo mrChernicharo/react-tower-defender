@@ -16,8 +16,9 @@ export function useGameLoop(callback) {
   }
 
   function updateLoop() {
+    console.log('updateLoop')
     pause();
-    setTimeout(() => play(), 0);
+    setTimeout(() => play(), 16);
   }
 
   function toggleSpeed() {
@@ -38,7 +39,7 @@ export function useGameLoop(callback) {
 
   function handleAnimationStep(tick) {
     const diff = (tick - prevTick.current) / 60
-    console.log(tick, gameSpeed)
+    // console.log(tick, gameSpeed)
     setClock(tick / 60);
     callback(diff)
     prevTick.current = tick
