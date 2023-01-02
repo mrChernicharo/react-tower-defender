@@ -6,6 +6,7 @@ import { getGridHeight } from "../../lib/helpers";
 export default function PathMenu({ id, x, y, type }) {
   const [stages, setStore] = useStore((store) => store.stages);
   const [path] = useStore((store) => store.path);
+  const [currentWave] = useStore((store) => store.currentWave);
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
   const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
@@ -15,21 +16,7 @@ export default function PathMenu({ id, x, y, type }) {
   const firstWaveRow = gridHeight - waveCount;
 
   function canBecomePath(tile) {
-    return !inBattle && tile.type === "grass" && !tile.hasTower;
-  }
-
-  function getCurrentWave(tile) {
-    const barrierBroken = tile.y > firstWaveRow;
-    const wave = barrierBroken ? tile.y - firstWaveRow : null;
-
-    if (barrierBroken) {
-      // const newTile = { ...tile, enemyEntrance: true };
-      // console.log(getUpdatedTiles(newTile));
-      console.log(`CALL WAVE ${wave}!`);
-      // TODO:  { ...tile, enemyEntrance: true }
-      // setStore({ inBattle: true });
-    }
-    return wave;
+    return tile.type === "grass" && !tile.hasTower;
   }
 
   function getUpdatedTiles(newTile) {
@@ -37,21 +24,37 @@ export default function PathMenu({ id, x, y, type }) {
       ...stages,
       [stageNumber]: {
         ...stages[stageNumber],
-        tiles: [...stages[stageNumber].tiles].map((t) =>
-          t.id === newTile.id ? newTile : t
-        ),
+        tiles: [...stages[stageNumber].tiles]
+          .map((t) => {
+            if (t.enemyEntrance) delete t.enemyEntrance;
+            return t;
+          })
+          .map((t) => (t.id === newTile.id ? newTile : t)),
       },
     };
   }
 
   function createNewPath(tile) {
     console.log("createNewPath", tile);
-    const newTile = { ...tile, type: "path" };
+
+    const barrierBroken = tile.y > firstWaveRow + currentWave;
+    if (barrierBroken) {
+      console.log(`CALL WAVE ${tile.y - firstWaveRow}!`);
+    }
+
+    const newTile = {
+      ...tile,
+      type: "path",
+      ...(barrierBroken && { enemyEntrance: true }),
+    };
 
     setStore({
-      currentWave: getCurrentWave(newTile),
       stages: getUpdatedTiles(newTile),
       path: [...path, newTile],
+      ...(barrierBroken && {
+        currentWave: tile.y - firstWaveRow,
+        inBattle: true,
+      }),
     });
   }
 

@@ -24,7 +24,7 @@ export default function Tiles() {
   const firstWaveRow = gridHeight - waveCount;
 
   // console.log({ gridWidth, gridHeight, waveCount, firstWaveRow, currentWave });
-  console.log(tiles);
+  // console.log(tiles);
 
   return (
     <>
@@ -60,9 +60,9 @@ export default function Tiles() {
               <rect
                 width={TILE_SIZE / 2}
                 height={20}
-                fill="green"
-                x={x * TILE_SIZE + 174}
-                y={y * TILE_SIZE + 150}
+                fill="white"
+                x={x * TILE_SIZE + TILE_SIZE * 0.75}
+                y={y * TILE_SIZE + TILE_SIZE * 0.875}
               />
             ) : null}
             {/* {type === "path" ? (
