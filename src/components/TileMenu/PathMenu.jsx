@@ -88,14 +88,20 @@ export default function PathMenu({ id, x, y, type }) {
       ...(barrierBroken && { enemyEntrance: true }),
     };
 
-    setStore({
+    const payload = {
       stages: getUpdatedTiles(newTile),
       tileChain: [...tileChain, newTile],
-      ...(barrierBroken && {
-        currentWave: tile.y - firstWaveRow,
-        inBattle: true,
-      }),
-    });
+      ...(barrierBroken
+        ? {
+            currentWave: tile.y - firstWaveRow,
+            inBattle: true,
+          }
+        : { enemies: [], inBattle: false }),
+    };
+
+    console.log(payload);
+
+    setStore(payload);
 
     // console.log("createNewPath", [...path, newTile]);
   }
@@ -128,33 +134,34 @@ export default function PathMenu({ id, x, y, type }) {
         x={x * TILE_SIZE - 24 + TILE_SIZE / 2}
         y={y * TILE_SIZE - 24 + TILE_SIZE / 2}
       />
-      {pathIcons.map(({ id, name, tx, ty, fill, icon }) => {
-        const adjacentTile = getAdjacentTile(name);
-        const isBuildableAdj = adjacentTile && canBecomePath(adjacentTile);
+      {!inBattle &&
+        pathIcons.map(({ id, name, tx, ty, fill, icon }) => {
+          const adjacentTile = getAdjacentTile(name);
+          const isBuildableAdj = adjacentTile && canBecomePath(adjacentTile);
 
-        if (!isBuildableAdj) return null;
+          if (!isBuildableAdj) return null;
 
-        return (
-          <g key={id}>
-            <circle
-              data-name={`${name}-path-icon`}
-              cx={x * TILE_SIZE + 50 + TILE_SIZE / 2 + tx}
-              cy={y * TILE_SIZE + 50 + TILE_SIZE / 2 + ty}
-              fill={fill}
-              r={25}
-              onClick={() => createNewPath(adjacentTile)}
-            />
+          return (
+            <g key={id}>
+              <circle
+                data-name={`${name}-path-icon`}
+                cx={x * TILE_SIZE + 50 + TILE_SIZE / 2 + tx}
+                cy={y * TILE_SIZE + 50 + TILE_SIZE / 2 + ty}
+                fill={fill}
+                r={25}
+                onClick={() => createNewPath(adjacentTile)}
+              />
 
-            <text
-              fontSize={32}
-              x={x * TILE_SIZE + 34 + TILE_SIZE / 2 + tx}
-              y={y * TILE_SIZE + 62 + TILE_SIZE / 2 + ty}
-            >
-              {icon}
-            </text>
-          </g>
-        );
-      })}
+              <text
+                fontSize={32}
+                x={x * TILE_SIZE + 34 + TILE_SIZE / 2 + tx}
+                y={y * TILE_SIZE + 62 + TILE_SIZE / 2 + ty}
+              >
+                {icon}
+              </text>
+            </g>
+          );
+        })}
     </g>
   );
 }

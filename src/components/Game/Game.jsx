@@ -18,31 +18,52 @@ import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 
 export function Game() {
-  const [enemies] = useStore((store) => store.enemies);
-  const [tileChain] = useStore((store) => store.tileChain);
-  const [inBattle, setStore] = useStore((store) => store.inBattle);
+  const [enemies, setStore] = useStore((store) => store.enemies);
 
   const [lanePaths, setLanePaths] = useState(null);
 
-  const { clock, playing, speed, pause, play, updateLoop, toggleSpeed } =
+  const { clock, playing, gameSpeed, pause, play, updateLoop, toggleSpeed } =
     useGameLoop(handleGameLoop);
 
   function handleGameLoop(timeDiff) {
-    // console.log({
-    //   lanePaths,
-    // });
+    // getUpdatedEnemies
     const updatedEnemies = [];
     for (const [i, e] of enemies.entries()) {
       const enemyPath = lanePaths[e.lane];
+      const endReached = e.percProgress > 100;
+      const isAlive = e.hp > 0;
+
+      // remove enemies who have reached the end or who died
+      if (endReached || !isAlive) {
+        updateLoop();
+        continue;
+      }
+
+      // movement enemies
       const prog =
         enemyPath.length -
-        (enemyPath.length - (e.progress + e.speed * speed * 0.1));
+        (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.05));
+
       const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
 
+      e.percProgress = (prog / enemyPath.length) * 100;
       e.progress = prog;
       e.pos.x = nextPos.x + 50;
       e.pos.y = nextPos.y + 50;
+
       updatedEnemies.push(e);
+    }
+
+    if (updatedEnemies.length === 0 && enemies.length) {
+      console.log("wave ended!");
+      setStore({
+        enemies: [],
+        inBattle: false,
+      });
+
+      setTimeout(() => {
+        updateLoop();
+      }, 100);
     }
 
     setStore({
@@ -50,58 +71,12 @@ export function Game() {
     });
   }
 
-  function createEnemies() {
-    const enemiesEntrypoint = tileChain.at(-1);
-
-    setStore({
-      enemies: [
-        {
-          ...ENEMIES.goblin,
-          lane: "left",
-          progress: 0,
-          pos: {
-            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-          },
-        },
-        {
-          ...ENEMIES.goblin,
-          lane: "center",
-          progress: 0,
-          pos: {
-            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-          },
-        },
-        {
-          ...ENEMIES.orc,
-          lane: "right",
-          progress: 0,
-          pos: {
-            x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-            y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-          },
-        },
-      ],
-    });
-    updateLoop();
-  }
-
-  useEffect(() => {
-    console.log(tileChain);
-
-    if (inBattle) {
-      createEnemies();
-    }
-  }, [inBattle]);
-
   return (
     <div className="text-white bg-gray-800 min-h-screen text-center">
-      <pre>{JSON.stringify(enemies)}</pre>
       <GameHeader
         clock={clock}
         playing={playing}
-        speed={speed}
+        speed={gameSpeed}
         pause={pause}
         play={play}
         toggleSpeed={toggleSpeed}
@@ -110,33 +85,17 @@ export function Game() {
       <svg width={600} height={1200} className="bg-gray-500 mx-auto">
         <g id="stage-map-g">
           <Tiles />
-          <TileMenu />
           <EnemyPath
-            onPathChanged={(paths) => {
-              const createLaneObj = (path) => {
-                return {
-                  length: path.getTotalLength(),
-                  start: path.getPointAtLength(path.getTotalLength()),
-                  end: path.getPointAtLength(0),
-                  getPointAtLength(val) {
-                    return path.getPointAtLength(val);
-                  },
-                };
-              };
-              const lanesInfo = {
-                left: createLaneObj(paths[0]),
-                center: createLaneObj(paths[1]),
-                right: createLaneObj(paths[2]),
-              };
-
-              console.log("onPathChanged", paths, p);
-
+            onPathChanged={(lanesInfo) => {
               setLanePaths(lanesInfo);
             }}
           />
-          <Enemies />
+          <Enemies updateLoop={updateLoop} />
+          <TileMenu />
         </g>
       </svg>
+
+      <pre className="text-left">{JSON.stringify(enemies, null, 2)}</pre>
     </div>
   );
 }

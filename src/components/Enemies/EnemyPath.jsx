@@ -87,11 +87,23 @@ export default function EnemyPath({ onPathChanged }) {
   ];
 
   useEffect(() => {
-    onPathChanged([
-      leftPathRef.current,
-      centerPathRef.current,
-      rightPathRef.current,
-    ]);
+    const createLaneObj = (path) => {
+      return {
+        length: path.getTotalLength(),
+        start: path.getPointAtLength(path.getTotalLength()),
+        end: path.getPointAtLength(0),
+        getPointAtLength(val) {
+          return path.getPointAtLength(val);
+        },
+      };
+    };
+    const lanesInfo = {
+      left: createLaneObj(leftPathRef.current),
+      center: createLaneObj(centerPathRef.current),
+      right: createLaneObj(rightPathRef.current),
+    };
+
+    onPathChanged(lanesInfo);
   }, [chains.center.length]);
 
   return (
@@ -130,22 +142,3 @@ export default function EnemyPath({ onPathChanged }) {
     </>
   );
 }
-
-// function handleMouseOver(e) {
-//   const leftPathLen = leftPathRef.current?.getTotalLength();
-//   const centerPathLen = centerPathRef.current?.getTotalLength();
-//   const rightPathLen = rightPathRef.current?.getTotalLength();
-
-//   console.log({
-//     e,
-//     leftPathLen,
-//     centerPathLen,
-//     rightPathLen,
-//     ll: leftPathRef.current?.getPointAtLength(leftPathLen),
-//     cl: centerPathRef.current?.getPointAtLength(centerPathLen),
-//     rl: rightPathRef.current?.getPointAtLength(rightPathLen),
-//     lh: leftPathRef.current?.getPointAtLength(leftPathLen / 2),
-//     ch: centerPathRef.current?.getPointAtLength(centerPathLen / 2),
-//     rh: rightPathRef.current?.getPointAtLength(rightPathLen / 2),
-//   });
-// }

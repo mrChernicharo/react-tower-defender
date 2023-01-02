@@ -290,6 +290,13 @@ export const ENEMIES = {
     gold: 7,
     fill: "darkgreen",
   },
+  troll: {
+    name: "troll",
+    speed: 5,
+    hp: 1600,
+    gold: 20,
+    fill: "#041",
+  },
 };
 
 export const towerIcons = [

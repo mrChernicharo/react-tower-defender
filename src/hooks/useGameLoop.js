@@ -6,7 +6,7 @@ export function useGameLoop(callback) {
   const prevTick = useRef(null)
   const [playing, setPlaying] = useState(false);
   const [clock, setClock] = useState(0);
-  const [speed, setSpeed] = useState(1);
+  const [gameSpeed, setGameSpeed] = useState(1);
 
   function play() {
     setPlaying(true);
@@ -22,11 +22,12 @@ export function useGameLoop(callback) {
 
   function toggleSpeed() {
     let newSpeed;
-    if (speed === 1) newSpeed = 2;
-    if (speed === 2) newSpeed = 4;
-    if (speed === 4) newSpeed = 1;
+    if (gameSpeed === 1) newSpeed = 2;
+    if (gameSpeed === 2) newSpeed = 4;
+    if (gameSpeed === 4) newSpeed = 8;
+    if (gameSpeed === 8) newSpeed = 1;
 
-    setSpeed(newSpeed);
+    setGameSpeed(newSpeed);
 
     if (playing) {
       updateLoop()
@@ -37,12 +38,13 @@ export function useGameLoop(callback) {
 
   function handleAnimationStep(tick) {
     const diff = (tick - prevTick.current) / 60
+    console.log(tick, gameSpeed)
     setClock(tick / 60);
     callback(diff)
     prevTick.current = tick
   }
 
-  useAnimationFrame(playing, speed, handleAnimationStep);
+  useAnimationFrame(playing, gameSpeed, handleAnimationStep);
 
 
 
@@ -53,6 +55,6 @@ export function useGameLoop(callback) {
     updateLoop,
     clock,
     playing,
-    speed
+    gameSpeed
   };
 }

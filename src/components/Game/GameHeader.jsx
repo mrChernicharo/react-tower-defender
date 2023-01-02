@@ -13,8 +13,9 @@ export function GameHeader({
   const { selectedTileId } = useClick();
   const [currentWave] = useStore((store) => store.currentWave);
   const [stageNumber, setStore] = useStore((store) => store.stageNumber);
-  const tileChain = useStore((store) => store.tileChain);
+  const [tileChain] = useStore((store) => store.tileChain);
   const [gold] = useStore((store) => store.gold);
+  const [inBattle] = useStore((store) => store.inBattle);
   function handleChangeStage() {
     const nextStage =
       stageNumber === Object.keys(STAGE_MAPS).length - 1 ? 0 : stageNumber + 1;
@@ -30,12 +31,20 @@ export function GameHeader({
       gold: initialGold,
     });
   }
+
   return (
     <div className="border sticky top-0 bg-gray-700">
+      <div className="grid grid-cols-4">
+        <div>Gold {gold}</div>
+        <div>inBattle {inBattle.toString()}</div>
+        <div>Gold {gold}</div>
+        <div>Gold {gold}</div>
+      </div>
+
       <div
-        className="grid grid-cols-4"
-        data-name="game-header"
         id="game-header"
+        data-name="game-header"
+        className="grid grid-cols-3"
       >
         <div>
           <div>{clock.toFixed(1)}</div>
@@ -55,7 +64,6 @@ export function GameHeader({
             Toggle Speed
           </button>
         </div>
-        <div>Gold {gold}</div>
       </div>
       <div className="grid grid-cols-3">
         <div>
