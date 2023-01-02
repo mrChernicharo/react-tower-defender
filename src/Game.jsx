@@ -14,6 +14,7 @@ import Tiles from "./Tiles";
 import Enemies from "./Enemies";
 // import { useStageMaps } from "./hooks/useStageMaps";
 import { useStore } from "./context/createFastContext";
+import EnemyPath from "./EnemyPath";
 
 export function Game() {
   const movement = 20; // 20px/sec
@@ -43,6 +44,7 @@ export function Game() {
         <g id="stage-map-g">
           <Tiles />
           <TileMenu />
+          <EnemyPath />
           <Enemies circleY={circleY} />
         </g>
       </svg>

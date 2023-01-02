@@ -30,16 +30,7 @@ export default function Tiles() {
   return (
     <>
       {tiles.map(
-        ({
-          id,
-          x,
-          y,
-          type,
-          startingPoint = false,
-          enemyEntrance = false,
-          exits = null,
-        }) => {
-          exits && console.log(exits);
+        ({ id, x, y, type, startingPoint = false, enemyEntrance = false }) => {
           return (
             <g key={`tile-${id}`} transform="translate(50,50)">
               <rect
@@ -110,26 +101,6 @@ export default function Tiles() {
             fill={tower.fill}
           />
         ))}
-      </g>
-
-      {/* TILE EXITS */}
-      <g transform="translate(50,50)">
-        {path.map((tile) => {
-          const { id, exits } = tile;
-          return (
-            <g key={id}>
-              {Object.keys(exits).map((k) => (
-                <circle
-                  key={`${exits[k].x}:${exits[k].y}`}
-                  r={6}
-                  cx={exits[k].x * TILE_SIZE}
-                  cy={exits[k].y * TILE_SIZE}
-                  fill="#ddd"
-                />
-              ))}
-            </g>
-          );
-        })}
       </g>
     </>
   );

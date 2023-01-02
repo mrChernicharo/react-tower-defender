@@ -41,9 +41,8 @@ export default function PathMenu({ id, x, y, type }) {
     const center = { x: 0, y: 0 };
     const right = { x: 0, y: 0 };
 
-    // newTile beneath
+    // newTile below
     if (prevTile.y < tile.y) {
-      console.log("new below");
       left.x = tile.x + 0.25;
       left.y = tile.y;
       center.x = tile.x + 0.5;
@@ -54,7 +53,6 @@ export default function PathMenu({ id, x, y, type }) {
 
     // newTile to the left
     if (prevTile.x > tile.x) {
-      console.log("new to the left");
       left.x = tile.x + 1;
       left.y = tile.y + 0.25;
       center.x = tile.x + 1;
@@ -65,7 +63,6 @@ export default function PathMenu({ id, x, y, type }) {
 
     // newTile to the right
     if (prevTile.x < tile.x) {
-      console.log("new to the right");
       left.x = tile.x;
       left.y = tile.y + 0.75;
       center.x = tile.x;
@@ -84,8 +81,6 @@ export default function PathMenu({ id, x, y, type }) {
       console.log(`CALL WAVE ${tile.y - firstWaveRow}!`);
     }
 
-    console.log(getTileExits(tile));
-
     const newTile = {
       ...tile,
       type: "path",
@@ -102,7 +97,7 @@ export default function PathMenu({ id, x, y, type }) {
       }),
     });
 
-    console.log("createNewPath", [...path, newTile]);
+    // console.log("createNewPath", [...path, newTile]);
   }
 
   function getAdjacentTile(direction) {
