@@ -1,6 +1,6 @@
-import { useStore } from "./context/createFastContext";
-import { useClick } from "./hooks/useClick";
-import { STAGE_MAPS, initialGold } from "./lib/constants";
+import { useStore } from "../../context/createFastContext";
+import { useClick } from "../../hooks/useClick";
+import { STAGE_MAPS, initialGold } from "../../lib/constants";
 
 export function GameHeader({
   clock,
@@ -24,6 +24,7 @@ export function GameHeader({
       currentWave: null,
       stageNumber: nextStage,
       stages: STAGE_MAPS,
+      enemies: [],
       towers: [],
       tileChain: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
       gold: initialGold,

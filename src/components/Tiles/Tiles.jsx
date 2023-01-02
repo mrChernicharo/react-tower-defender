@@ -1,12 +1,12 @@
-import { useStore } from "./context/createFastContext";
-import { useClick } from "./hooks/useClick";
+import { useStore } from "../../context/createFastContext";
+import { useClick } from "../../hooks/useClick";
 import {
   HIGHLIGHTED_TILE_COLORS,
   STAGE_MAPS,
   TILE_COLORS,
   TILE_SIZE,
-} from "./lib/constants";
-import { getGridHeight, getGridWidth } from "./lib/helpers";
+} from "../../lib/constants";
+import { getGridHeight, getGridWidth } from "../../lib/helpers";
 const pathIcon = "⛏";
 
 export default function Tiles() {
@@ -15,7 +15,7 @@ export default function Tiles() {
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [currentWave] = useStore((store) => store.currentWave);
   const [towers] = useStore((store) => store.towers);
-  const tileChain = useStore((store) => store.tileChain);
+  // const [tileChain] = useStore((store) => store.tileChain);
   const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
   const [waveCount] = useStore((store) => store.stages[stageNumber].waveCount);
 

@@ -1,15 +1,15 @@
-import { useRef } from "react";
-import { useStore } from "./context/createFastContext";
-import { TILE_SIZE } from "./lib/constants";
+import { useEffect, useRef } from "react";
+import { useStore } from "../../context/createFastContext";
+import { TILE_SIZE } from "../../lib/constants";
 
-export default function EnemyPath() {
+export default function EnemyPath({ onPathChanged }) {
   const leftPathRef = useRef(null);
   const centerPathRef = useRef(null);
   const rightPathRef = useRef(null);
 
   const [tileChain] = useStore((store) => store.tileChain);
 
-  const paths = tileChain.reduce(
+  const chains = tileChain.reduce(
     (acc, tile) => {
       acc.left.push(tile.exits.left);
       acc.center.push(tile.exits.center);
@@ -23,7 +23,7 @@ export default function EnemyPath() {
     }
   );
 
-  function createPath(points) {
+  function createPath(points, lane) {
     let d = "";
     let prevPos = null;
 
@@ -56,21 +56,47 @@ export default function EnemyPath() {
       prevPos = pos;
     }
 
-    // const d2d = new Path2D(d);
+    const hasEnemyEntrance = tileChain.at(-1).enemyEntrance;
+    if (hasEnemyEntrance) {
+      let entryPos = { x: 0, y: 0 };
+      const firstTileEntry = points.at(-1);
 
+      entryPos.x = firstTileEntry.x * TILE_SIZE;
+      entryPos.y = firstTileEntry.y * TILE_SIZE + TILE_SIZE * 0.5;
+
+      if (lane === "left") {
+        entryPos.x += TILE_SIZE * 0.25;
+      }
+      if (lane === "right") {
+        entryPos.x -= TILE_SIZE * 0.25;
+      }
+
+      d += ` L ${entryPos.x} ${entryPos.y}`;
+    }
     return d;
   }
 
-  let ld, cd, rd;
-  ld = createPath(paths.left);
-  cd = createPath(paths.center);
-  rd = createPath(paths.right);
+  const paths = [
+    { id: "left", d: createPath(chains.left, "left"), ref: leftPathRef },
+    {
+      id: "center",
+      d: createPath(chains.center, "center"),
+      ref: centerPathRef,
+    },
+    { id: "right", d: createPath(chains.right, "right"), ref: rightPathRef },
+  ];
 
-  // console.log(tileChain, paths, ld, cd, rd);
+  useEffect(() => {
+    onPathChanged([
+      leftPathRef.current,
+      centerPathRef.current,
+      rightPathRef.current,
+    ]);
+  }, [chains.center.length]);
 
   return (
     <>
-      {/* TILE EXITS */}
+      {/* TILE EXIT DOTS */}
       <g transform="translate(50,50)">
         {tileChain.map((tile) => {
           const { id, exits } = tile;
@@ -89,28 +115,17 @@ export default function EnemyPath() {
           );
         })}
 
-        <path
-          ref={leftPathRef}
-          d={ld}
-          strokeWidth={3}
-          stroke="#ddd"
-          fill="none"
-          // onMouseOver={handleMouseOver}
-        />
-        <path
-          ref={centerPathRef}
-          d={cd}
-          strokeWidth={3}
-          stroke="#ddd"
-          fill="none"
-        />
-        <path
-          ref={rightPathRef}
-          d={rd}
-          strokeWidth={3}
-          stroke="#ddd"
-          fill="none"
-        />
+        {/* PATHS */}
+        {paths.map(({ id, d, ref }) => (
+          <path
+            key={id}
+            ref={ref}
+            d={d}
+            strokeWidth={3}
+            stroke="#ddd"
+            fill="none"
+          />
+        ))}
       </g>
     </>
   );
