@@ -41,7 +41,7 @@ export function useGameLoop(callback) {
     const diff = (tick - prevTick.current) / 60
     // console.log(tick, gameSpeed)
     setClock(tick / 60);
-    callback(diff)
+    callback(tick)
     prevTick.current = tick
   }
 

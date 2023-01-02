@@ -25,10 +25,21 @@ export function Game() {
   const { clock, playing, gameSpeed, pause, play, updateLoop, toggleSpeed } =
     useGameLoop(handleGameLoop);
 
-  function handleGameLoop(timeDiff) {
+  function handleGameLoop(tick) {
     // getUpdatedEnemies
+    // const waveStartTick = (clock * 60) / gameSpeed;
+    // const currClock = (tick / 60) * gameSpeed;
+    // const waveTime = currClock - clock;
     const updatedEnemies = [];
+
     for (const [i, e] of enemies.entries()) {
+      // console.log({
+      //   tick,
+      //   /**
+      //   clock, currClock,
+      // */ waveTime,
+      // });
+
       const enemyPath = lanePaths[e.lane];
       const endReached = e.percProgress > 100;
       const isAlive = e.hp > 0;
@@ -42,7 +53,7 @@ export function Game() {
       // movement enemies
       const prog =
         enemyPath.length -
-        (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.05));
+        (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.1));
 
       const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
 
@@ -54,16 +65,16 @@ export function Game() {
       updatedEnemies.push(e);
     }
 
+    // wave ended
     if (updatedEnemies.length === 0 && enemies.length) {
-      console.log("wave ended!");
       setStore({
         enemies: [],
         inBattle: false,
       });
-
       updateLoop();
     }
 
+    //
     setStore({
       enemies: updatedEnemies,
     });

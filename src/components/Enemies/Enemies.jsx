@@ -11,33 +11,39 @@ export default function Enemies({ updateLoop }) {
     const enemiesEntrypoint = tileChain.at(-1);
     const waveEnemies = [
       {
-        ...ENEMIES.goblin,
+        name: "goblin",
         lane: "left",
-        progress: 0,
-        pos: {
-          x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-          y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-        },
       },
       {
-        ...ENEMIES.troll,
+        name: "troll",
         lane: "center",
-        progress: 0,
-        pos: {
-          x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-          y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-        },
       },
       {
-        ...ENEMIES.orc,
+        name: "orc",
         lane: "right",
-        progress: 0,
-        pos: {
-          x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
-          y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
-        },
       },
-    ];
+      {
+        name: "goblin",
+        lane: "left",
+      },
+      {
+        name: "troll",
+        lane: "center",
+      },
+      {
+        name: "orc",
+        lane: "right",
+      },
+    ].map((e) => ({
+      ...ENEMIES[e.name],
+      lane: e.lane,
+      progress: 0,
+      percProgress: 0,
+      pos: {
+        x: enemiesEntrypoint.x * TILE_SIZE + TILE_SIZE / 2 + 50,
+        y: enemiesEntrypoint.y * TILE_SIZE + TILE_SIZE / 2 + 50,
+      },
+    }));
 
     return waveEnemies;
   }
@@ -53,6 +59,7 @@ export default function Enemies({ updateLoop }) {
     }
     updateLoop();
   }, [inBattle]);
+
   return (
     <>
       {inBattle &&
