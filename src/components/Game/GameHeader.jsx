@@ -2,15 +2,10 @@ import { useStore } from "../../context/createFastContext";
 import { useClick } from "../../hooks/useClick";
 import { STAGE_MAPS, initialGold } from "../../lib/constants";
 
-export function GameHeader({
-  clock,
-  playing,
-  speed,
-  pause,
-  play,
-  toggleSpeed,
-}) {
+export function GameHeader({ clock, pause, play, toggleSpeed }) {
   const { selectedTileId } = useClick();
+  const [isPlaying] = useStore((store) => store.isPlaying);
+  const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
   const [stageNumber, setStore] = useStore((store) => store.stageNumber);
   const [tileChain] = useStore((store) => store.tileChain);
@@ -49,7 +44,7 @@ export function GameHeader({
       >
         <div>
           <div>{clock.toFixed(1)}</div>
-          <div>{playing ? "Playing" : "Paused"}</div>
+          <div>{isPlaying ? "Playing" : "Paused"}</div>
         </div>
         <div>
           <button className="btn" onClick={() => play()}>
@@ -60,7 +55,7 @@ export function GameHeader({
           </button>
         </div>
         <div>
-          <div>{speed} X</div>
+          <div>{gameSpeed} X</div>
           <button className="btn" onClick={() => toggleSpeed()}>
             Toggle Speed
           </button>

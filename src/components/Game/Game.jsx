@@ -1,41 +1,35 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  ENEMIES,
-  HIGHLIGHTED_TILE_COLORS,
-  STAGE_MAPS,
-  TILE_COLORS,
-  TILE_SIZE,
-  towerIcons,
-} from "../../lib/constants";
 import { GameHeader } from "./GameHeader";
 import { useGameLoop } from "../../hooks/useGameLoop";
-import { useClick } from "../../hooks/useClick";
 import TileMenu from "../TileMenu/TileMenu";
 import Tiles from "../Tiles/Tiles";
 import Enemies from "../Enemies/Enemies";
-// import { useStageMaps } from "./hooks/useStageMaps";
 import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 
 export function Game() {
   const currClock = useRef(0);
-  const [enemies, setStore] = useStore((store) => store.enemies);
+  const [isPlaying] = useStore((store) => store.isPlaying);
+  const [inBattle] = useStore((store) => store.inBattle);
+  const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
+  const [enemies, setStore] = useStore((store) => store.enemies);
 
   const [lanePaths, setLanePaths] = useState(null);
   const [wavesTimes, setWavesTimes] = useState({});
 
-  const { clock, playing, gameSpeed, pause, play, updateLoop, toggleSpeed } =
-    useGameLoop(handleGameLoop);
+  const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
-  // tick already considers gameSpeed
-  function handleGameLoop(tick) {
+  function handleGameLoop(tick, enemies) {
+    // tick already considers gameSpeed
     currClock.current = tick / 60;
-    const waveTime = currClock.current - wavesTimes[waveNumber].start;
+    const waveTime = currClock.current - wavesTimes[waveNumber]?.start || 0;
+    // console.log({ waveTime, currClock: currClock.current });
 
     // getUpdatedEnemies
     const updatedEnemies = [];
     for (const [i, e] of enemies.entries()) {
+      if (e.name === "troll") console.log(e.name, e.delay, e.y);
       // don't add enemy unless we're past it's delay time
       if (waveTime < e.delay) {
         continue;
@@ -46,7 +40,7 @@ export function Game() {
 
       // remove enemies who have reached the end or who died
       if (endReached || !isAlive) {
-        updateLoop();
+        // updateLoop();
         continue;
       }
 
@@ -67,7 +61,8 @@ export function Game() {
     }
 
     // wave ended
-    if (updatedEnemies.length === 0 && enemies.length) {
+    if (inBattle && updatedEnemies.length === 0 && enemies.length) {
+      console.log("wave ended!");
       setStore({
         enemies: [],
         inBattle: false,
@@ -79,10 +74,11 @@ export function Game() {
         [currWave]: { ...prev[currWave], end: currClock.current },
       }));
 
-      updateLoop();
+      pause();
     }
 
     // update enemies
+    console.log({ updatedEnemies });
     setStore({
       enemies: updatedEnemies,
     });
@@ -96,8 +92,6 @@ export function Game() {
     <div className="text-white bg-gray-800 min-h-screen text-center">
       <GameHeader
         clock={clock}
-        playing={playing}
-        speed={gameSpeed}
         pause={pause}
         play={play}
         toggleSpeed={toggleSpeed}
@@ -111,18 +105,18 @@ export function Game() {
               setLanePaths(lanesInfo);
             }}
           />
-          <Enemies updateLoop={updateLoop} />
+          <Enemies />
           <TileMenu
-            updateLoop={updateLoop}
             onWaveCalled={() => {
+              const wave = waveNumber + 1;
               waveNumber
                 ? setWavesTimes((prev) => ({
                     ...prev,
-                    [waveNumber + 1]: { ...prev[waveNumber + 1], start: clock },
+                    [wave]: { ...prev[wave], start: clock },
                   }))
                 : setWavesTimes({ 1: { start: clock } });
 
-              updateLoop();
+              setTimeout(() => play(), 100);
             }}
             onPathTileCreated={(payload) => {
               setStore(payload);
@@ -131,7 +125,13 @@ export function Game() {
         </g>
       </svg>
 
-      <pre className="text-left">{JSON.stringify(enemies, null, 2)}</pre>
+      <pre className="text-left">
+        {JSON.stringify(
+          enemies.map((e) => e.name),
+          null,
+          2
+        )}
+      </pre>
     </div>
   );
 }

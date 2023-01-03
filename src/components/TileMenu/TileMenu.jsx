@@ -3,11 +3,7 @@ import { useClick } from "../../hooks/useClick";
 import PathMenu from "./PathMenu";
 import TowerMenu from "./TowerMenu";
 
-export default function TileMenu({
-  updateLoop,
-  onPathTileCreated,
-  onWaveCalled,
-}) {
+export default function TileMenu({ onPathTileCreated, onWaveCalled }) {
   const { selectedTileId } = useClick();
 
   const [stages] = useStore((store) => store.stages);
@@ -28,7 +24,6 @@ export default function TileMenu({
         x={x}
         y={y}
         type={type}
-        updateLoop={updateLoop}
         onPathTileCreated={onPathTileCreated}
         onWaveCalled={onWaveCalled}
       />

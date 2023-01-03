@@ -8,11 +8,10 @@ export default function PathMenu({
   x,
   y,
   type,
-  updateLoop,
   onPathTileCreated,
   onWaveCalled,
 }) {
-  const [stages, setStore] = useStore((store) => store.stages);
+  const [stages] = useStore((store) => store.stages);
   const [tileChain] = useStore((store) => store.tileChain);
   const [waveNumber] = useStore((store) => store.waveNumber);
   const [stageNumber] = useStore((store) => store.stageNumber);
@@ -82,8 +81,7 @@ export default function PathMenu({
   }
 
   function createNewPath(tile) {
-    // console.log("createNewPath", tile, path);
-
+    console.log("createNewPath", tile);
     const barrierBroken = tile.y > firstWaveRow + waveNumber;
 
     const newTile = {
@@ -105,7 +103,7 @@ export default function PathMenu({
     onPathTileCreated(payload);
 
     if (barrierBroken) {
-      console.log(`CALL WAVE ${tile.y - firstWaveRow}!`);
+      console.log(`CALL WAVE ${tile.y - firstWaveRow}!`, payload);
       onWaveCalled();
     }
     // console.log("createNewPath", [...path, newTile]);

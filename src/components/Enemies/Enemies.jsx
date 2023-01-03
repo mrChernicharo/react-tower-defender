@@ -107,7 +107,7 @@ export default function Enemies({ updateLoop }) {
       setStore({
         enemies: createEnemies(),
       });
-      updateLoop();
+      // updateLoop();
     }
   }, [inBattle]);
 

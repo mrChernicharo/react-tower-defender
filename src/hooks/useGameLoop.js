@@ -3,22 +3,19 @@ import { useStore } from "../context/createFastContext";
 import { useAnimationFrame } from "./useAnimationFrame";
 
 export function useGameLoop(callback) {
-  const prevTick = useRef(null)
-  const [playing, setPlaying] = useState(false);
+  const [enemies] = useStore((store) => store.enemies);
+  const prevTick = useRef(null);
   const [clock, setClock] = useState(0);
-  const [gameSpeed, setGameSpeed] = useState(1);
+  const [isPlaying] = useStore((store) => store.isPlaying);
+  const [gameSpeed, setStore] = useStore((store) => store.gameSpeed);
+  // const [enemies] = useStore((store) => store.enemies);
+
 
   function play() {
-    setPlaying(true);
+    setStore({ isPlaying: true });
   }
   function pause() {
-    setPlaying(false);
-  }
-
-  function updateLoop() {
-    console.log('updateLoop')
-    pause();
-    setTimeout(() => play(), 16);
+    setStore({ isPlaying: false });
   }
 
   function toggleSpeed() {
@@ -28,34 +25,25 @@ export function useGameLoop(callback) {
     if (gameSpeed === 4) newSpeed = 8;
     if (gameSpeed === 8) newSpeed = 1;
 
-    setGameSpeed(newSpeed);
-
-    // if (playing) {
-    updateLoop()
-    // }
+    setStore({ gameSpeed: newSpeed });
   }
 
-
-
-  function handleAnimationStep(tick) {
-    const diff = (tick - prevTick.current) / 60
-    // console.log(tick, gameSpeed)
-    setClock(tick / 60);
-    callback(tick)
-    prevTick.current = tick
+  function handleAnimationStep(frameID, tick) {
+    if (isPlaying) {
+      const diff = (tick - prevTick.current) / 60;
+      // console.log(tick, gameSpeed)
+      setClock(tick / 60);
+      callback(tick, enemies || []);
+      prevTick.current = tick;
+    }
   }
 
-  useAnimationFrame(playing, gameSpeed, handleAnimationStep);
-
-
+  useAnimationFrame(handleAnimationStep);
 
   return {
     play,
     pause,
     toggleSpeed,
-    updateLoop,
     clock,
-    playing,
-    gameSpeed
   };
 }

@@ -1,8 +1,12 @@
 import { useEffect, useRef } from "react";
+import { useStore } from "../context/createFastContext";
 
-export function useAnimationFrame(playing, speed, callback) {
+export function useAnimationFrame(callback) {
   const frame = useRef(null);
   const tick = useRef(0);
+
+  const [isPlaying] = useStore((store) => store.isPlaying);
+  const [gameSpeed] = useStore((store) => store.gameSpeed);
 
   function incrementTick(speed) {
     let incr;
@@ -15,18 +19,18 @@ export function useAnimationFrame(playing, speed, callback) {
   }
 
   function animate(frameID) {
-    incrementTick(speed);
-    callback(tick.current);
+    incrementTick(gameSpeed);
+    callback(frameID, tick.current);
     frame.current = requestAnimationFrame(animate);
   }
 
   useEffect(() => {
-    if (playing) {
+    if (isPlaying) {
       frame.current = requestAnimationFrame(animate);
     } else {
       cancelAnimationFrame(frame.current);
     }
 
     return () => cancelAnimationFrame(frame.current);
-  }, [playing]);
+  }, [isPlaying]);
 }
