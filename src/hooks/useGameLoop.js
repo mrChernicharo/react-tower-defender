@@ -9,7 +9,6 @@ export function useGameLoop(callback) {
   const [gameSpeed, setStore] = useStore((store) => store.gameSpeed);
   // const [enemies] = useStore((store) => store.enemies);
 
-
   function play() {
     setStore({ isPlaying: true });
   }
@@ -26,8 +25,10 @@ export function useGameLoop(callback) {
 
     setStore({ gameSpeed: newSpeed });
 
-    pause()
-    setTimeout(() => play(), 12)
+    if (isPlaying) {
+      pause();
+      setTimeout(() => play(), 12);
+    }
   }
 
   function handleAnimationStep(frameID, tick) {

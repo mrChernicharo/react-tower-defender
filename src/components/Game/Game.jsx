@@ -27,14 +27,8 @@ export function Game() {
     // console.log({ waveTime, currClock: currClock.current });
 
     // getUpdatedEnemies
-    console.log(enemies);
     const updatedEnemies = [];
     for (const [i, e] of enemies.entries()) {
-      if (e.name === "troll") console.log(e.name, e.delay, e.y);
-      // if (waveTime < e.delay) {
-      //   continue;
-      // }
-
       const endReached = e.percProgress > 100;
       const isAlive = e.hp > 0;
 
@@ -130,7 +124,7 @@ export function Game() {
 
       <pre className="text-left">
         {JSON.stringify(
-          enemies.map((e) => e.name),
+          enemies.map((e) => `${e.name} hp:${e.hp} delay:${e.delay}`),
           null,
           2
         )}

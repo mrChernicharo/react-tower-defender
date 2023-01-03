@@ -3,14 +3,7 @@ import { useStore } from "../../context/createFastContext";
 import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../lib/constants";
 import { getGridHeight } from "../../lib/helpers";
 
-export default function PathMenu({
-  id,
-  x,
-  y,
-  type,
-  onPathTileCreated,
-  onWaveCalled,
-}) {
+export default function PathMenu({ tile, onPathTileCreated, onWaveCalled }) {
   const [stages] = useStore((store) => store.stages);
   const [tileChain] = useStore((store) => store.tileChain);
   const [waveNumber] = useStore((store) => store.waveNumber);
@@ -21,6 +14,8 @@ export default function PathMenu({
 
   const gridHeight = getGridHeight(tiles);
   const firstWaveRow = gridHeight - waveCount;
+
+  const { id, x, y, connected } = tile;
 
   function canBecomePath(tile) {
     return tile.type === "grass" && !tile.hasTower;
@@ -91,9 +86,15 @@ export default function PathMenu({
       ...(barrierBroken && { enemyEntrance: true }),
     };
 
+    const newTileChain = [...tileChain];
+    const prevTile = newTileChain.pop();
+    prevTile.connected = true;
+
+    console.log({ newTile, prevTile, newTileChain });
+
     const payload = {
       stages: getUpdatedTiles(newTile),
-      tileChain: [...tileChain, newTile],
+      tileChain: [...newTileChain, prevTile, newTile],
       ...(barrierBroken && {
         waveNumber: tile.y - firstWaveRow,
         inBattle: true,
@@ -140,7 +141,9 @@ export default function PathMenu({
       {!inBattle &&
         pathIcons.map(({ id, name, tx, ty, fill, icon }) => {
           const adjacentTile = getAdjacentTile(name);
-          const isBuildableAdj = adjacentTile && canBecomePath(adjacentTile);
+          console.log({ adjacentTile });
+          const isBuildableAdj =
+            !connected && adjacentTile && canBecomePath(adjacentTile);
 
           if (!isBuildableAdj) return null;
 
@@ -152,7 +155,9 @@ export default function PathMenu({
                 cy={y * TILE_SIZE + 50 + TILE_SIZE / 2 + ty}
                 fill={fill}
                 r={25}
-                onClick={() => createNewPath(adjacentTile)}
+                onClick={() => {
+                  createNewPath(adjacentTile);
+                }}
               />
 
               <text

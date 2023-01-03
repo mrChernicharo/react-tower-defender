@@ -14,16 +14,13 @@ export default function TileMenu({ onPathTileCreated, onWaveCalled }) {
 
   if (!activeTile()) return null;
 
-  const { id, x, y, type, hasTower = false } = activeTile();
+  const { id, x, y, type, connected = false, hasTower = false } = activeTile();
 
   const tileMenus = {
     grass: <TowerMenu id={id} x={x} y={y} type={type} hasTower={hasTower} />,
     path: (
       <PathMenu
-        id={id}
-        x={x}
-        y={y}
-        type={type}
+        tile={activeTile()}
         onPathTileCreated={onPathTileCreated}
         onWaveCalled={onWaveCalled}
       />
