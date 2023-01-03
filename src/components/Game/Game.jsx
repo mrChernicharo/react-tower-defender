@@ -78,15 +78,7 @@ export function Game() {
       let highestHP = -Infinity;
 
       // calculate tower cooldown
-
       const elapsed = waveTime - tower.lastShot;
-
-      // console.log({
-      //   elapsed: elapsed.toFixed(1),
-      //   waveTime: waveTime.toFixed(1),
-      //   lastShot: tower.lastShot.toFixed(1),
-      //   cooldown: tower.cooldown.toFixed(1),
-      // });
 
       // find out what enemies are in range
       for (const [i, enemy] of updatedEnemies.entries()) {
@@ -165,10 +157,6 @@ export function Game() {
     }
   }
 
-  useEffect(() => {
-    console.log({ wavesTimes });
-  }, [wavesTimes]);
-
   return (
     <div className="text-white bg-gray-800 min-h-screen text-center">
       <GameHeader
@@ -209,8 +197,10 @@ export function Game() {
                 stages: updatedTiles,
                 gold: gold - newTower.price,
               });
-              pause();
-              setTimeout(() => play(), 120);
+              if (isPlaying) {
+                pause();
+                setTimeout(() => play(), 120);
+              }
             }}
           />
         </g>
