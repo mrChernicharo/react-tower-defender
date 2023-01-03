@@ -28,6 +28,11 @@ export function Game() {
   function handleGameLoop(tick) {
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesTimes[waveNumber]?.start || 0;
+    const initialTowers = [...towers].map((t) => ({
+      ...t,
+      cooldown: 0,
+      lastShot: 0,
+    }));
     // console.log({ waveTime, currClock: currClock.current });
     // console.log({ towers, enemies });
 
@@ -60,66 +65,95 @@ export function Game() {
       }
 
       updatedEnemies.push(enemy);
+    }
+    // console.log(towers);
 
-      for (const [j, tower] of towers.entries()) {
-        let inRangeCount = 0;
-        let farthestEnemy = null;
-        let trailingEnemy = null;
-        let closestEnemy = null;
-        let strongestEnemy = null;
-        let smallestDistance = Infinity;
-        let greatestProgress = -Infinity;
-        let smallestProgress = Infinity;
-        let highestHP = -Infinity;
-        for (const [i, enemy] of updatedEnemies.entries()) {
-          const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
-          const enemyInRange = d < tower.range;
-          if (enemyInRange) {
-            inRangeCount++;
-            // console.log(tower.name, enemy.name, d);
+    // towers loop
+    // const updatedTowers = []
+    for (const [j, tower] of towers.entries()) {
+      let inRangeCount = 0;
+      let farthestEnemy = null;
+      let trailingEnemy = null;
+      let closestEnemy = null;
+      let strongestEnemy = null;
+      let smallestDistance = Infinity;
+      let greatestProgress = -Infinity;
+      let smallestProgress = Infinity;
+      let highestHP = -Infinity;
 
-            if (d < smallestDistance) {
-              smallestDistance = d;
-              closestEnemy = { i, ...enemy };
-            }
+      // calculate tower cooldown
 
-            if (enemy.progress > greatestProgress) {
-              greatestProgress = enemy.progress;
-              farthestEnemy = { i, ...enemy };
-            }
+      const elapsed = waveTime - tower.lastShot;
 
-            if (enemy.progress < smallestProgress) {
-              smallestProgress = enemy.progress;
-              trailingEnemy = { i, ...enemy };
-            }
+      // console.log({
+      //   elapsed: elapsed.toFixed(1),
+      //   waveTime: waveTime.toFixed(1),
+      //   lastShot: tower.lastShot.toFixed(1),
+      //   cooldown: tower.cooldown.toFixed(1),
+      // });
 
-            if (enemy.hp > highestHP) {
-              highestHP = enemy.hp;
-              strongestEnemy = { i, ...enemy };
-            }
+      // find out what enemies are in range
+      for (const [i, enemy] of updatedEnemies.entries()) {
+        const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
+        const enemyInRange = d < tower.range;
+
+        if (enemyInRange) {
+          inRangeCount++;
+
+          if (d < smallestDistance) {
+            smallestDistance = d;
+            closestEnemy = { i, ...enemy };
+          }
+
+          if (enemy.progress > greatestProgress) {
+            greatestProgress = enemy.progress;
+            farthestEnemy = { i, ...enemy };
+          }
+
+          if (enemy.progress < smallestProgress) {
+            smallestProgress = enemy.progress;
+            trailingEnemy = { i, ...enemy };
+          }
+
+          if (enemy.hp > highestHP) {
+            highestHP = enemy.hp;
+            strongestEnemy = { i, ...enemy };
           }
         }
-
-        if (inRangeCount) {
-          console.log(tower.name, {
-            inRangeCount,
-            farthest: farthestEnemy?.name ?? null,
-            closest: closestEnemy?.name ?? null,
-            trailing: trailingEnemy?.name ?? null,
-            strongest: strongestEnemy?.name ?? null,
-          });
-        }
-        // else {
-        //   console.log(tower.name, "no target", { inRangeCount });
-        // }
       }
-    }
 
+      if (tower.cooldown <= 0 && farthestEnemy) {
+        console.log("shoot!!!", {
+          tower: tower.name,
+          enemy: farthestEnemy.name,
+        });
+
+        // tower.cooldown = 60 / tower.rate_of_fire / 60;
+        tower.lastShot = waveTime;
+        tower.cooldown = tower.shotsPerSecond * 60;
+      } else {
+        tower.cooldown -= elapsed;
+      }
+
+      // if (inRangeCount) {
+      //   console.log(tower.name, {
+      //     inRangeCount,
+      //     farthest: farthestEnemy?.name ?? null,
+      //     closest: closestEnemy?.name ?? null,
+      //     trailing: trailingEnemy?.name ?? null,
+      //     strongest: strongestEnemy?.name ?? null,
+      //   });
+      // }
+      // else {
+      //   console.log(tower.name, "no target", { inRangeCount });
+      // }
+    }
     // wave ended
     if (inBattle && updatedEnemies.length === 0) {
       console.log("wave ended!");
       setStore({
         enemies: updatedEnemies,
+        towers: initialTowers,
         inBattle: false,
       });
 

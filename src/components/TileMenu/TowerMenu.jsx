@@ -8,24 +8,20 @@ import {
   towerIcons,
 } from "../../lib/constants";
 
-export default function TowerMenu({
-  id,
-  x,
-  y,
-  type,
-  hasTower,
-  onTowerCreated,
-}) {
-  const [selectedTileId] = useStore((store) => store.selectedTileId);
+export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
+  // const [selectedTileId] = useStore((store) => store.selectedTileId);
   // console.log({ id, x, y, selectedTileId });
 
-  const [towers, setStore] = useStore((store) => store.towers);
+  // const [towers, setStore] = useStore((store) => store.towers);
   const [gold] = useStore((store) => store.gold);
   const [stages] = useStore((store) => store.stages);
   const [stageNumber] = useStore((store) => store.stageNumber);
+  const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
+
   const [subMenuOpen, setSubMenuOpen] = useState(false);
   const [previewedTower, setPreviewedTower] = useState(null);
-  const [tiles] = useStore((store) => store.stages[stageNumber].tiles);
+
+  const towerSelected = (name) => subMenuOpen && previewedTower.name === name;
 
   function getUpdatedTiles(tileId) {
     const tile = tiles.find((t) => t.id === tileId);
@@ -48,6 +44,16 @@ export default function TowerMenu({
     ];
   }
 
+  function handleIconClick(id, name) {
+    subMenuOpen && previewedTower.name === name && previewedTower.price <= gold
+      ? handleCreateNewTower(
+          id,
+          x * TILE_SIZE + 50 + TILE_SIZE / 2,
+          y * TILE_SIZE + 50 + TILE_SIZE / 2
+        )
+      : handleTowerPreview(id, name);
+  }
+
   function handleTowerPreview(tileId, name) {
     const tower = TOWERS[name];
     console.log("handleTowerPreview", tileId, name, tower);
@@ -56,13 +62,25 @@ export default function TowerMenu({
   }
 
   function handleCreateNewTower(tileId, x, y) {
-    const newTower = { ...previewedTower, tileId, x, y };
+    const newTower = {
+      ...previewedTower,
+      tileId,
+      x,
+      y,
+      cooldown: 0,
+      shotsPerSecond: 60 / previewedTower.rate_of_fire / 60,
+      // cooldown: 60 / previewedTower.rate_of_fire,
+      lastShot: 0,
+    };
     console.log("create new tower!", { newTower });
 
     onTowerCreated(newTower, getUpdatedTiles(tileId));
     setSubMenuOpen(false);
     setPreviewedTower(null);
   }
+
+  const getIconDataName = (name) =>
+    towerSelected(name) ? `${name}-tower-confirm-icon` : `${name}-tower-icon`;
 
   useEffect(() => {
     setSubMenuOpen(false);
@@ -86,67 +104,53 @@ export default function TowerMenu({
 
       {towerIcons.map(({ name, tx, ty, fill, towerInfo }) => (
         <g key={`${id}-${name}`}>
-          <g>
-            <circle
-              data-name={
-                subMenuOpen && previewedTower.name === name
-                  ? `${name}-tower-confirm-icon`
-                  : `${name}-tower-icon`
-              }
-              cx={x * TILE_SIZE + 50 + TILE_SIZE / 2 + tx}
-              cy={y * TILE_SIZE + 50 + TILE_SIZE / 2 + ty}
-              fill={subMenuOpen && previewedTower.name === name ? "#0d7" : fill}
-              r={25}
-              onClick={() => {
-                subMenuOpen &&
-                previewedTower.name === name &&
-                previewedTower.price <= gold
-                  ? handleCreateNewTower(
-                      id,
-                      x * TILE_SIZE + 50 + TILE_SIZE / 2,
-                      y * TILE_SIZE + 50 + TILE_SIZE / 2
-                    )
-                  : handleTowerPreview(id, name);
-              }}
-            />
-
-            {subMenuOpen && previewedTower.name === name && (
-              <>
-                <circle
-                  className="tower-preview"
-                  cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-                  cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
-                  r={20}
-                  fill={previewedTower.fill}
-                />
-                <circle
-                  className="tower-preview"
-                  cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-                  cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
-                  r={20}
-                  fill={previewedTower.fill}
-                />
-                <circle
-                  id={`${towerInfo.tileId}::${towerInfo.name}::range`}
-                  className="tower-preview-range"
-                  cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-                  cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
-                  r={towerInfo.range}
-                  fill={towerInfo.fill}
-                  pointerEvents="none"
-                  opacity={0.15}
-                />
-                <text
-                  x={x * TILE_SIZE + 35 + TILE_SIZE / 2 + tx}
-                  y={y * TILE_SIZE + 64 + TILE_SIZE / 2 + ty}
-                  fontSize={32}
-                  fill="#fff"
-                >
-                  ✔
-                </text>
-              </>
-            )}
-          </g>
+          <circle
+            data-name={getIconDataName(name)}
+            cx={x * TILE_SIZE + 50 + TILE_SIZE / 2 + tx}
+            cy={y * TILE_SIZE + 50 + TILE_SIZE / 2 + ty}
+            fill={towerSelected(name) ? "#0d7" : fill}
+            r={25}
+            onClick={() => {
+              console.log({ towerInfo });
+              handleIconClick(id, name);
+            }}
+          />
+          {towerSelected(name) && (
+            <>
+              <circle
+                className="tower-preview"
+                cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
+                cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+                r={20}
+                fill={previewedTower.fill}
+              />
+              <circle
+                className="tower-preview"
+                cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
+                cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+                r={20}
+                fill={previewedTower.fill}
+              />
+              <circle
+                id={`${towerInfo.tileId}::${towerInfo.name}::range`}
+                className="tower-preview-range"
+                cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
+                cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+                r={towerInfo.range}
+                fill={towerInfo.fill}
+                pointerEvents="none"
+                opacity={0.15}
+              />
+              <text
+                x={x * TILE_SIZE + 35 + TILE_SIZE / 2 + tx}
+                y={y * TILE_SIZE + 64 + TILE_SIZE / 2 + ty}
+                fontSize={32}
+                fill="#fff"
+              >
+                ✔
+              </text>
+            </>
+          )}
         </g>
       ))}
       {subMenuOpen ? (
