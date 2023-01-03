@@ -232,26 +232,6 @@ export const ENEMY_WAVES =  [
     delay: 0,
   },
   {
-    name: "troll",
-    lane: "center",
-    delay: 0,
-  },
-  {
-    name: "orc",
-    lane: "right",
-    delay: 2,
-  },
-  {
-    name: "goblin",
-    lane: "left",
-    delay: 2,
-  },
-  {
-    name: "troll",
-    lane: "center",
-    delay: 4,
-  },
-  {
     name: "orc",
     lane: "right",
     delay: 4,
@@ -259,27 +239,12 @@ export const ENEMY_WAVES =  [
   {
     name: "goblin",
     lane: "left",
-    delay: 6,
+    delay: 4,
   },
   {
-    name: "goblin",
-    lane: "right",
+    name: "troll",
+    lane: "center",
     delay: 8,
-  },
-  {
-    name: "goblin",
-    lane: "center",
-    delay: 10,
-  },
-  {
-    name: "troll",
-    lane: "left",
-    delay: 6,
-  },
-  {
-    name: "orc",
-    lane: "center",
-    delay: 7,
   },
   {
     name: "orc",
@@ -289,17 +254,42 @@ export const ENEMY_WAVES =  [
   {
     name: "goblin",
     lane: "left",
+    delay: 8,
+  },
+  {
+    name: "goblin",
+    lane: "right",
     delay: 12,
   },
   {
     name: "goblin",
+    lane: "center",
+    delay: 12,
+  },
+  {
+    name: "orc",
+    lane: "center",
+    delay: 16,
+  },
+  {
+    name: "orc",
     lane: "right",
-    delay: 13,
+    delay: 20,
+  },
+  {
+    name: "goblin",
+    lane: "left",
+    delay: 20,
   },
   {
     name: "goblin",
     lane: "right",
-    delay: 14,
+    delay: 24,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 24,
   },
 ]
 
@@ -373,7 +363,7 @@ export const ENEMIES = {
   troll: {
     name: "troll",
     speed: 5,
-    hp: 1600,
+    hp: 500,
     gold: 20,
     fill: "#041",
     size: 10,

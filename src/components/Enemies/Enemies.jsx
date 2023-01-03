@@ -9,8 +9,9 @@ export default function Enemies({ updateLoop }) {
 
   function createEnemies() {
     const enemiesEntrypoint = tileChain.at(-1);
-    const waveEnemies = ENEMY_WAVES.map((e) => ({
+    const waveEnemies = ENEMY_WAVES.map((e, i) => ({
       ...ENEMIES[e.name],
+      id: `${e.name}::${i}`,
       lane: e.lane,
       delay: e.delay,
       progress: 0,

@@ -69,8 +69,12 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
       y,
       cooldown: 0,
       shotsPerSecond: 60 / previewedTower.rate_of_fire / 60,
-      // cooldown: 60 / previewedTower.rate_of_fire,
       lastShot: 0,
+      shoot(enemy) {
+        console.log("shoot this motherfucker!", { t: this, enemy });
+        enemy.hp -= this.damage;
+        return enemy;
+      },
     };
     console.log("create new tower!", { newTower });
 

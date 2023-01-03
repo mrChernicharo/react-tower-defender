@@ -33,17 +33,15 @@ export function Game() {
       cooldown: 0,
       lastShot: 0,
     }));
-    // console.log({ waveTime, currClock: currClock.current });
-    // console.log({ towers, enemies });
 
     // getUpdatedEnemies
     const updatedEnemies = [];
     for (const [i, enemy] of enemies.entries()) {
       const endReached = enemy.percProgress > 100;
-      const isAlive = enemy.hp > 0;
+      const isDead = enemy.hp <= 0;
 
       // remove enemies who have reached the end or who died
-      if (endReached || !isAlive) {
+      if (endReached || isDead) {
         continue;
       }
 
@@ -100,33 +98,39 @@ export function Game() {
 
           if (d < smallestDistance) {
             smallestDistance = d;
-            closestEnemy = { i, ...enemy };
+            closestEnemy = enemy;
           }
 
           if (enemy.progress > greatestProgress) {
             greatestProgress = enemy.progress;
-            farthestEnemy = { i, ...enemy };
+            farthestEnemy = enemy;
           }
 
           if (enemy.progress < smallestProgress) {
             smallestProgress = enemy.progress;
-            trailingEnemy = { i, ...enemy };
+            trailingEnemy = enemy;
           }
 
           if (enemy.hp > highestHP) {
             highestHP = enemy.hp;
-            strongestEnemy = { i, ...enemy };
+            strongestEnemy = enemy;
           }
         }
       }
 
       if (tower.cooldown <= 0 && farthestEnemy) {
-        console.log("shoot!!!", {
-          tower: tower.name,
-          enemy: farthestEnemy.name,
-        });
+        // console.log("shoot!!!", {
+        //   tower: tower.name,
+        //   enemy: farthestEnemy.name,
+        // });
+        const hitEnemy = tower.shoot(farthestEnemy);
 
-        // tower.cooldown = 60 / tower.rate_of_fire / 60;
+        if (hitEnemy) {
+          const { i, id } = hitEnemy;
+          console.log({ hitEnemy });
+          updatedEnemies[i] = hitEnemy;
+        }
+
         tower.lastShot = waveTime;
         tower.cooldown = tower.shotsPerSecond * 60;
       } else {
@@ -137,7 +141,7 @@ export function Game() {
     if (inBattle && updatedEnemies.length === 0) {
       console.log("wave ended!");
       setStore({
-        enemies: updatedEnemies,
+        enemies: updatedEnemies, // []
         towers: initialTowers,
         inBattle: false,
       });
@@ -156,6 +160,8 @@ export function Game() {
       setStore({
         enemies: updatedEnemies,
       });
+
+      console.log(updatedEnemies.map((e) => e.id + " " + e.hp));
     }
   }
 
