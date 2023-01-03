@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from "react";
+import { useStore } from "../../context/createFastContext";
 import { useClick } from "../../hooks/useClick";
 
 export default function Tower({ tower }) {
-  const { selectedTileId } = useClick();
+  const [selectedTileId] = useStore((store) => store.selectedTileId);
 
   const rangeRef = useRef(null);
   const [opacity, setOpacity] = useState(0);
 
-  // useEffect(() => {
-  //   console.log(selectedTileId);
-  // }, [selectedTileId]);
+  useEffect(() => {
+    console.log(selectedTileId);
+    if (selectedTileId !== tower.tileId) {
+      setOpacity(0);
+    }
+  }, [selectedTileId]);
   return (
     <g>
       <circle
@@ -21,23 +25,8 @@ export default function Tower({ tower }) {
         r={tower.range}
         fill={tower.fill}
         pointerEvents="none"
-        opacity={selectedTileId === tower.tileId ? 0.25 : opacity}
+        opacity={selectedTileId === tower.tileId ? 0.15 : opacity}
       />
-      {/* 
-      <circle
-        className={"tower-hit-area"}
-        onMouseOver={(e) => {
-          console.log("onMouseOver", selectedTileId, tower);
-          setOpacity(0.25);
-        }}
-        onMouseOut={(e) => {
-          console.log("onMouseOut", selectedTileId, tower);
-          setOpacity(0);
-        }}
-        cx={tower.x}
-        cy={tower.y}
-        r={20}
-      /> */}
 
       <circle
         id={`${tower.tileId}::${tower.name}`}
@@ -45,15 +34,14 @@ export default function Tower({ tower }) {
         cx={tower.x}
         cy={tower.y}
         r={20}
-        // onMouseOver={(e) => {
-        //   console.log("onMouseOver", selectedTileId, tower);
-        //   setOpacity(0.25);
-        // }}
-        // onMouseOut={(e) => {
-        //   console.log("onMouseOut", selectedTileId, tower);
-        //   setOpacity(selectedTileId === tower.tileId ? 0.25 : 0);
-        // }}
-        // pointerEvents="none"
+        onMouseOver={(e) => {
+          // console.log("onMouseOver", selectedTileId, tower);
+          setOpacity(0.25);
+        }}
+        onMouseOut={(e) => {
+          // console.log("onMouseOut", selectedTileId, tower);
+          setOpacity(selectedTileId === tower.tileId ? 0.15 : 0);
+        }}
         fill={tower.fill}
       />
     </g>

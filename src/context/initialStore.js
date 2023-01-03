@@ -1,6 +1,5 @@
 import { initialGold, STAGE_MAPS } from "../lib/constants";
 
-
 export const initialStore = {
   stageNumber: 0,
   waveNumber: 0,
@@ -12,5 +11,6 @@ export const initialStore = {
   gold: initialGold,
   inBattle: false,
   isPlaying: false,
-  gameSpeed: 1
+  gameSpeed: 1,
+  selectedTileId: null,
 };

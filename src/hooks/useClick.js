@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { useStore } from "../context/createFastContext";
 
 export function useClick() {
-  const [selectedTileId, setSelectedTileId] = useState(null);
+  const [selectedTileId, setStore] = useStore((store) => store.selectedTileId);
 
   function handleTileClick(e) {
     // console.log({ e, s: selectedTileId, t: e.target.id });
@@ -9,16 +10,18 @@ export function useClick() {
     const clickedTower = e.target.classList.contains("tower");
     if (clickedTower) {
       const tileId = e.target.id.split("::")[0];
-      console.log('clickedTower',{ tileId, targetId: e.target.id });
-      setSelectedTileId(tileId);
-      return
+      console.log("clickedTower", { tileId, targetId: e.target.id });
+      // setStore({ selectedTileId: tileId });
+      selectedTileId === tileId
+        ? setStore({ selectedTileId: null })
+        : setStore({ selectedTileId: tileId });
+      return;
 
       // if (selectedTileId) {
-      //   setSelectedTileId(null)
+      //   setStore({selectedTileId: null})
       // } else {
-      //   setSelectedTileId(tileId)
+      //   setStore({selectedTileId: tileId})
       // }
-      // selectedTileId ? setSelectedTileId(null) : setSelectedTileId(tileId);
       // console.log("clicked tower, open menu!");
     }
 
@@ -34,9 +37,8 @@ export function useClick() {
 
     if (clickedOutside) {
       // console.log("clicked outside");
-      return setSelectedTileId(null);
+      return setStore({ selectedTileId: null });
     }
-    
 
     const clickedTile = e.target.dataset?.name?.includes("tile");
     const clickedTowerIcon = e.target.dataset?.name?.includes("tower-icon");
@@ -48,7 +50,7 @@ export function useClick() {
 
     if (clickedSelectInnerRing) {
       // console.log("clicked inside ring");
-      return setSelectedTileId(null);
+      return setStore({ selectedTileId: null });
     }
 
     if (clickedTowerIcon) {
@@ -58,12 +60,12 @@ export function useClick() {
 
     if (clickedCreateTowerIcon) {
       // console.log(`clickedCreateTowerIcon ${e.target.dataset.name}`);
-      return setTimeout(() => setSelectedTileId(null), 0);
+      return setTimeout(() => setStore({ selectedTileId: null }), 0);
     }
 
     if (clickedPathIcon) {
       // console.log(`clicked ${e.target.dataset.name}`);
-      setTimeout(() => setSelectedTileId(null), 0);
+      setTimeout(() => setStore({ selectedTileId: null }), 0);
       return;
     }
 
@@ -72,10 +74,10 @@ export function useClick() {
 
       // clicked same tile
       if (e.target.id === selectedTileId) {
-        return setSelectedTileId(null);
+        return setStore({ selectedTileId: null });
       } else {
         // console.log("open menu!");
-        setSelectedTileId(e.target.id);
+        setStore({ selectedTileId: e.target.id });
       }
     }
   }
@@ -84,8 +86,4 @@ export function useClick() {
     document.addEventListener("pointerup", handleTileClick);
     return () => document.removeEventListener("pointerup", handleTileClick);
   }, [handleTileClick]);
-
-  return {
-    selectedTileId,
-  };
 }

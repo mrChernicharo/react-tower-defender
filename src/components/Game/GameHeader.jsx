@@ -3,7 +3,7 @@ import { useClick } from "../../hooks/useClick";
 import { STAGE_MAPS, initialGold } from "../../lib/constants";
 
 export function GameHeader({ clock, pause, play, toggleSpeed }) {
-  const { selectedTileId } = useClick();
+  const [selectedTileId] = useStore((store) => store.selectedTileId);
   const [isPlaying] = useStore((store) => store.isPlaying);
   const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
@@ -25,6 +25,7 @@ export function GameHeader({ clock, pause, play, toggleSpeed }) {
       tileChain: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
       gold: initialGold,
       inBattle: false,
+      selectedTileId: null,
     });
   }
 

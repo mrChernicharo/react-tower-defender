@@ -6,8 +6,10 @@ import Tiles from "../Tiles/Tiles";
 import Enemies from "../Enemies/Enemies";
 import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
+import { useClick } from "../../hooks/useClick";
 
 export function Game() {
+  useClick();
   const currClock = useRef(0);
   const [isPlaying] = useStore((store) => store.isPlaying);
   const [inBattle] = useStore((store) => store.inBattle);

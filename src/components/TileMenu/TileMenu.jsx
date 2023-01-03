@@ -4,7 +4,7 @@ import PathMenu from "./PathMenu";
 import TowerMenu from "./TowerMenu";
 
 export default function TileMenu({ onPathTileCreated, onWaveCalled }) {
-  const { selectedTileId } = useClick();
+  const [selectedTileId] = useStore((store) => store.selectedTileId);
 
   const [stages] = useStore((store) => store.stages);
   const [stageNumber] = useStore((store) => store.stageNumber);

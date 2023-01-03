@@ -11,7 +11,7 @@ import Tower from "../Tower/Tower";
 const pathIcon = "⛏";
 
 export default function Tiles() {
-  const { selectedTileId } = useClick();
+  const [selectedTileId] = useStore((store) => store.selectedTileId);
 
   const [stageNumber] = useStore((store) => store.stageNumber);
   const [waveNumber] = useStore((store) => store.waveNumber);

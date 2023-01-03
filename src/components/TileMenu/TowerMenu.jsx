@@ -10,7 +10,7 @@ import {
 } from "../../lib/constants";
 
 export default function TowerMenu({ id, x, y, type, hasTower }) {
-  const { selectedTileId } = useClick();
+  const [selectedTileId] = useStore((store) => store.selectedTileId);
   // console.log({ id, x, y, selectedTileId });
 
   const [towers, setStore] = useStore((store) => store.towers);

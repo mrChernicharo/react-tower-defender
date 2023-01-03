@@ -141,7 +141,6 @@ export default function PathMenu({ tile, onPathTileCreated, onWaveCalled }) {
       {!inBattle &&
         pathIcons.map(({ id, name, tx, ty, fill, icon }) => {
           const adjacentTile = getAdjacentTile(name);
-          console.log({ adjacentTile });
           const isBuildableAdj =
             !connected && adjacentTile && canBecomePath(adjacentTile);
 
