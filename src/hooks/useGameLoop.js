@@ -3,7 +3,6 @@ import { useStore } from "../context/createFastContext";
 import { useAnimationFrame } from "./useAnimationFrame";
 
 export function useGameLoop(callback) {
-  const [enemies] = useStore((store) => store.enemies);
   const prevTick = useRef(null);
   const [clock, setClock] = useState(0);
   const [isPlaying] = useStore((store) => store.isPlaying);
@@ -26,6 +25,9 @@ export function useGameLoop(callback) {
     if (gameSpeed === 8) newSpeed = 1;
 
     setStore({ gameSpeed: newSpeed });
+
+    pause()
+    setTimeout(() => play(), 12)
   }
 
   function handleAnimationStep(frameID, tick) {
@@ -33,7 +35,7 @@ export function useGameLoop(callback) {
       const diff = (tick - prevTick.current) / 60;
       // console.log(tick, gameSpeed)
       setClock(tick / 60);
-      callback(tick, enemies || []);
+      callback(tick);
       prevTick.current = tick;
     }
   }

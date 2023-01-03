@@ -20,20 +20,20 @@ export function Game() {
 
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
-  function handleGameLoop(tick, enemies) {
+  function handleGameLoop(tick) {
     // tick already considers gameSpeed
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesTimes[waveNumber]?.start || 0;
     // console.log({ waveTime, currClock: currClock.current });
 
     // getUpdatedEnemies
+    console.log(enemies);
     const updatedEnemies = [];
     for (const [i, e] of enemies.entries()) {
       if (e.name === "troll") console.log(e.name, e.delay, e.y);
-      // don't add enemy unless we're past it's delay time
-      if (waveTime < e.delay) {
-        continue;
-      }
+      // if (waveTime < e.delay) {
+      //   continue;
+      // }
 
       const endReached = e.percProgress > 100;
       const isAlive = e.hp > 0;
@@ -44,27 +44,29 @@ export function Game() {
         continue;
       }
 
-      // compute some data...
-      const enemyPath = lanePaths[e.lane];
-      const prog =
-        enemyPath.length -
-        (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.1));
-      const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
-
-      // ...to update enemies' positions and progress
-      e.percProgress = (prog / enemyPath.length) * 100;
-      e.progress = prog;
-      e.pos.x = nextPos.x + 50;
-      e.pos.y = nextPos.y + 50;
+      // don't move enemy unless we're past it's delay time
+      if (waveTime >= e.delay) {
+        // compute some data...
+        const enemyPath = lanePaths[e.lane];
+        const prog =
+          enemyPath.length -
+          (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.1));
+        const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
+        // ...to update enemies' positions and progress
+        e.percProgress = (prog / enemyPath.length) * 100;
+        e.progress = prog;
+        e.pos.x = nextPos.x + 50;
+        e.pos.y = nextPos.y + 50;
+      }
 
       updatedEnemies.push(e);
     }
 
     // wave ended
-    if (inBattle && updatedEnemies.length === 0 && enemies.length) {
+    if (inBattle && updatedEnemies.length === 0) {
       console.log("wave ended!");
       setStore({
-        enemies: [],
+        enemies: updatedEnemies,
         inBattle: false,
       });
 
@@ -78,10 +80,11 @@ export function Game() {
     }
 
     // update enemies
-    console.log({ updatedEnemies });
-    setStore({
-      enemies: updatedEnemies,
-    });
+    if (inBattle && updatedEnemies.length) {
+      setStore({
+        enemies: updatedEnemies,
+      });
+    }
   }
 
   useEffect(() => {
