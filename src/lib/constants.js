@@ -309,6 +309,7 @@ export const towerIcons = [
     tx: 0,
     ty: -75,
     fill: "red",
+    towerInfo: TOWERS['fire']
   },
   {
     id: 2,
@@ -316,6 +317,7 @@ export const towerIcons = [
     tx: 75,
     ty: 0,
     fill: "yellow",
+    towerInfo: TOWERS['lightning']
   },
   {
     id: 3,
@@ -323,6 +325,7 @@ export const towerIcons = [
     tx: -75,
     ty: 0,
     fill: "blue",
+    towerInfo: TOWERS['ice']
   },
   {
     id: 4,
@@ -330,6 +333,7 @@ export const towerIcons = [
     tx: 0,
     ty: 75,
     fill: "brown",
+    towerInfo: TOWERS['earth']
   },
 ];
 

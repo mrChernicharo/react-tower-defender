@@ -84,7 +84,7 @@ export default function TowerMenu({
         y={y * TILE_SIZE - 24 + TILE_SIZE / 2}
       />
 
-      {towerIcons.map(({ name, tx, ty, fill }) => (
+      {towerIcons.map(({ name, tx, ty, fill, towerInfo }) => (
         <g key={`${id}-${name}`}>
           <g>
             <circle
@@ -111,27 +111,46 @@ export default function TowerMenu({
             />
 
             {subMenuOpen && previewedTower.name === name && (
-              <text
-                x={x * TILE_SIZE + 35 + TILE_SIZE / 2 + tx}
-                y={y * TILE_SIZE + 64 + TILE_SIZE / 2 + ty}
-                fontSize={32}
-                fill="#fff"
-              >
-                ✔
-              </text>
+              <>
+                <circle
+                  className="tower-preview"
+                  cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
+                  cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+                  r={20}
+                  fill={previewedTower.fill}
+                />
+                <circle
+                  className="tower-preview"
+                  cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
+                  cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+                  r={20}
+                  fill={previewedTower.fill}
+                />
+                <circle
+                  id={`${towerInfo.tileId}::${towerInfo.name}::range`}
+                  className="tower-preview-range"
+                  cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
+                  cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
+                  r={towerInfo.range}
+                  fill={towerInfo.fill}
+                  pointerEvents="none"
+                  opacity={0.15}
+                />
+                <text
+                  x={x * TILE_SIZE + 35 + TILE_SIZE / 2 + tx}
+                  y={y * TILE_SIZE + 64 + TILE_SIZE / 2 + ty}
+                  fontSize={32}
+                  fill="#fff"
+                >
+                  ✔
+                </text>
+              </>
             )}
           </g>
         </g>
       ))}
       {subMenuOpen ? (
         <>
-          <circle
-            className="tower-preview"
-            cx={x * TILE_SIZE + 50 + TILE_SIZE / 2}
-            cy={y * TILE_SIZE + 50 + TILE_SIZE / 2}
-            r={20}
-            fill={previewedTower.fill}
-          />
           <rect
             x={x * TILE_SIZE + 60 + TILE_SIZE / 2 + getTowerIconPos("x")}
             y={y * TILE_SIZE + 62 + TILE_SIZE / 2 + getTowerIconPos("y")}

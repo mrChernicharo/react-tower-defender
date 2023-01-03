@@ -37,15 +37,6 @@ export function Game() {
       const endReached = enemy.percProgress > 100;
       const isAlive = enemy.hp > 0;
 
-      const closestEnemy = null;
-      for (const [j, tower] of towers.entries()) {
-        const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
-        const enemyInRange = d < tower.range;
-        if (enemyInRange) {
-          console.log(tower.name, enemy.name, d);
-        }
-      }
-
       // remove enemies who have reached the end or who died
       if (endReached || !isAlive) {
         continue;
@@ -69,6 +60,20 @@ export function Game() {
       }
 
       updatedEnemies.push(enemy);
+
+      const closestEnemy = null;
+      for (const [j, tower] of towers.entries()) {
+        let inRangeCount = 0;
+        for (const [i, enemy] of updatedEnemies.entries()) {
+          const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
+          const enemyInRange = d < tower.range;
+          if (enemyInRange) {
+            inRangeCount++;
+            // console.log(tower.name, enemy.name, d);
+          }
+        }
+        console.log({ tower: tower.name, inRangeCount });
+      }
     }
 
     // wave ended

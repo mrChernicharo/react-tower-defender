@@ -134,6 +134,7 @@ export default function EnemyPath({ onPathChanged }) {
             ref={ref}
             d={d}
             strokeWidth={3}
+            strokeDasharray={5}
             stroke="#ddd"
             fill="none"
           />
