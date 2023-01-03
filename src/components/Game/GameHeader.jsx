@@ -1,5 +1,4 @@
 import { useStore } from "../../context/createFastContext";
-import { useClick } from "../../hooks/useClick";
 import { STAGE_MAPS, initialGold } from "../../lib/constants";
 
 export function GameHeader({ clock, pause, play, toggleSpeed }) {

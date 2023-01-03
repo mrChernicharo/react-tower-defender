@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Ring from "../../assets/Ring";
 import { useStore } from "../../context/createFastContext";
-import { useClick } from "../../hooks/useClick";
 import {
   TILE_SIZE,
   TOWERS,
@@ -9,7 +8,14 @@ import {
   towerIcons,
 } from "../../lib/constants";
 
-export default function TowerMenu({ id, x, y, type, hasTower }) {
+export default function TowerMenu({
+  id,
+  x,
+  y,
+  type,
+  hasTower,
+  onTowerCreated,
+}) {
   const [selectedTileId] = useStore((store) => store.selectedTileId);
   // console.log({ id, x, y, selectedTileId });
 
@@ -53,11 +59,7 @@ export default function TowerMenu({ id, x, y, type, hasTower }) {
     const newTower = { ...previewedTower, tileId, x, y };
     console.log("create new tower!", { newTower });
 
-    setStore({
-      towers: [...towers, newTower],
-      stages: getUpdatedTiles(tileId),
-      gold: gold - newTower.price,
-    });
+    onTowerCreated(newTower, getUpdatedTiles(tileId));
     setSubMenuOpen(false);
     setPreviewedTower(null);
   }

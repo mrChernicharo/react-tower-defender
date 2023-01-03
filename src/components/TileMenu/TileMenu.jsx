@@ -1,9 +1,12 @@
 import { useStore } from "../../context/createFastContext";
-import { useClick } from "../../hooks/useClick";
 import PathMenu from "./PathMenu";
 import TowerMenu from "./TowerMenu";
 
-export default function TileMenu({ onPathTileCreated, onWaveCalled }) {
+export default function TileMenu({
+  onPathTileCreated,
+  onWaveCalled,
+  onTowerCreated,
+}) {
   const [selectedTileId] = useStore((store) => store.selectedTileId);
 
   const [stages] = useStore((store) => store.stages);
@@ -17,7 +20,16 @@ export default function TileMenu({ onPathTileCreated, onWaveCalled }) {
   const { id, x, y, type, connected = false, hasTower = false } = activeTile();
 
   const tileMenus = {
-    grass: <TowerMenu id={id} x={x} y={y} type={type} hasTower={hasTower} />,
+    grass: (
+      <TowerMenu
+        id={id}
+        x={x}
+        y={y}
+        type={type}
+        hasTower={hasTower}
+        onTowerCreated={onTowerCreated}
+      />
+    ),
     path: (
       <PathMenu
         tile={activeTile()}

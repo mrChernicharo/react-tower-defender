@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "../../context/createFastContext";
-import { useClick } from "../../hooks/useClick";
 
 export default function Tower({ tower }) {
   const [selectedTileId] = useStore((store) => store.selectedTileId);

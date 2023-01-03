@@ -7,6 +7,7 @@ import Enemies from "../Enemies/Enemies";
 import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 import { useClick } from "../../hooks/useClick";
+import { getDistance } from "../../lib/helpers";
 
 export function Game() {
   useClick();
@@ -15,6 +16,8 @@ export function Game() {
   const [inBattle] = useStore((store) => store.inBattle);
   const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
+  const [towers] = useStore((store) => store.towers);
+  const [gold] = useStore((store) => store.gold);
   const [enemies, setStore] = useStore((store) => store.enemies);
 
   const [lanePaths, setLanePaths] = useState(null);
@@ -23,39 +26,49 @@ export function Game() {
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
   function handleGameLoop(tick) {
-    // tick already considers gameSpeed
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesTimes[waveNumber]?.start || 0;
     // console.log({ waveTime, currClock: currClock.current });
+    // console.log({ towers, enemies });
 
     // getUpdatedEnemies
     const updatedEnemies = [];
-    for (const [i, e] of enemies.entries()) {
-      const endReached = e.percProgress > 100;
-      const isAlive = e.hp > 0;
+    for (const [i, enemy] of enemies.entries()) {
+      const endReached = enemy.percProgress > 100;
+      const isAlive = enemy.hp > 0;
+
+      const closestEnemy = null;
+      for (const [j, tower] of towers.entries()) {
+        const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
+        const enemyInRange = d < tower.range;
+        if (enemyInRange) {
+          console.log(tower.name, enemy.name, d);
+        }
+      }
 
       // remove enemies who have reached the end or who died
       if (endReached || !isAlive) {
-        // updateLoop();
         continue;
       }
 
       // don't move enemy unless we're past it's delay time
-      if (waveTime >= e.delay) {
-        // compute some data...
-        const enemyPath = lanePaths[e.lane];
+      if (waveTime >= enemy.delay) {
+        const enemyPath = lanePaths[enemy.lane];
+
         const prog =
           enemyPath.length -
-          (enemyPath.length - (e.progress + e.speed * gameSpeed * 0.1));
+          (enemyPath.length - (enemy.progress + enemy.speed * gameSpeed * 0.1));
+
         const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
-        // ...to update enemies' positions and progress
-        e.percProgress = (prog / enemyPath.length) * 100;
-        e.progress = prog;
-        e.pos.x = nextPos.x + 50;
-        e.pos.y = nextPos.y + 50;
+
+        // update enemies' positions and progress
+        enemy.percProgress = (prog / enemyPath.length) * 100;
+        enemy.progress = prog;
+        enemy.pos.x = nextPos.x + 50;
+        enemy.pos.y = nextPos.y + 50;
       }
 
-      updatedEnemies.push(e);
+      updatedEnemies.push(enemy);
     }
 
     // wave ended
@@ -75,7 +88,7 @@ export function Game() {
       pause();
     }
 
-    // update enemies
+    // wave continues: update enemies
     if (inBattle && updatedEnemies.length) {
       setStore({
         enemies: updatedEnemies,
@@ -119,6 +132,16 @@ export function Game() {
             }}
             onPathTileCreated={(payload) => {
               setStore(payload);
+            }}
+            onTowerCreated={(newTower, updatedTiles) => {
+              console.log("onTowerCreated", newTower, updatedTiles);
+              setStore({
+                towers: [...towers, newTower],
+                stages: updatedTiles,
+                gold: gold - newTower.price,
+              });
+              pause();
+              setTimeout(() => play(), 0);
             }}
           />
         </g>

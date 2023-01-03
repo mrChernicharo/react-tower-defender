@@ -1,5 +1,4 @@
 import { useStore } from "../../context/createFastContext";
-import { useClick } from "../../hooks/useClick";
 import {
   HIGHLIGHTED_TILE_COLORS,
   STAGE_MAPS,
