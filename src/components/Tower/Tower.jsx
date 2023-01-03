@@ -35,7 +35,7 @@ export default function Tower({ tower }) {
         r={20}
         onMouseOver={(e) => {
           // console.log("onMouseOver", selectedTileId, tower);
-          setOpacity(0.25);
+          setOpacity(0.15);
         }}
         onMouseOut={(e) => {
           // console.log("onMouseOut", selectedTileId, tower);

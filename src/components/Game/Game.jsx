@@ -61,18 +61,57 @@ export function Game() {
 
       updatedEnemies.push(enemy);
 
-      const closestEnemy = null;
       for (const [j, tower] of towers.entries()) {
         let inRangeCount = 0;
+        let farthestEnemy = null;
+        let trailingEnemy = null;
+        let closestEnemy = null;
+        let strongestEnemy = null;
+        let smallestDistance = Infinity;
+        let greatestProgress = -Infinity;
+        let smallestProgress = Infinity;
+        let highestHP = -Infinity;
         for (const [i, enemy] of updatedEnemies.entries()) {
           const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
           const enemyInRange = d < tower.range;
           if (enemyInRange) {
             inRangeCount++;
             // console.log(tower.name, enemy.name, d);
+
+            if (d < smallestDistance) {
+              smallestDistance = d;
+              closestEnemy = { i, ...enemy };
+            }
+
+            if (enemy.progress > greatestProgress) {
+              greatestProgress = enemy.progress;
+              farthestEnemy = { i, ...enemy };
+            }
+
+            if (enemy.progress < smallestProgress) {
+              smallestProgress = enemy.progress;
+              trailingEnemy = { i, ...enemy };
+            }
+
+            if (enemy.hp > highestHP) {
+              highestHP = enemy.hp;
+              strongestEnemy = { i, ...enemy };
+            }
           }
         }
-        console.log({ tower: tower.name, inRangeCount });
+
+        if (inRangeCount) {
+          console.log(tower.name, {
+            inRangeCount,
+            farthest: farthestEnemy?.name ?? null,
+            closest: closestEnemy?.name ?? null,
+            trailing: trailingEnemy?.name ?? null,
+            strongest: strongestEnemy?.name ?? null,
+          });
+        }
+        // else {
+        //   console.log(tower.name, "no target", { inRangeCount });
+        // }
       }
     }
 
@@ -133,7 +172,7 @@ export function Game() {
                   }))
                 : setWavesTimes({ 1: { start: clock } });
 
-              setTimeout(() => play(), 100);
+              setTimeout(() => play(), 120);
             }}
             onPathTileCreated={(payload) => {
               setStore(payload);
@@ -146,7 +185,7 @@ export function Game() {
                 gold: gold - newTower.price,
               });
               pause();
-              setTimeout(() => play(), 0);
+              setTimeout(() => play(), 120);
             }}
           />
         </g>
