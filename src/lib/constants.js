@@ -225,6 +225,84 @@ export const STAGE_MAPS = {
   },
 };
 
+export const ENEMY_WAVES =  [
+  {
+    name: "goblin",
+    lane: "left",
+    delay: 0,
+  },
+  {
+    name: "troll",
+    lane: "center",
+    delay: 0,
+  },
+  {
+    name: "orc",
+    lane: "right",
+    delay: 2,
+  },
+  {
+    name: "goblin",
+    lane: "left",
+    delay: 2,
+  },
+  {
+    name: "troll",
+    lane: "center",
+    delay: 4,
+  },
+  {
+    name: "orc",
+    lane: "right",
+    delay: 4,
+  },
+  {
+    name: "goblin",
+    lane: "left",
+    delay: 6,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 8,
+  },
+  {
+    name: "goblin",
+    lane: "center",
+    delay: 10,
+  },
+  {
+    name: "troll",
+    lane: "left",
+    delay: 6,
+  },
+  {
+    name: "orc",
+    lane: "center",
+    delay: 7,
+  },
+  {
+    name: "orc",
+    lane: "right",
+    delay: 8,
+  },
+  {
+    name: "goblin",
+    lane: "left",
+    delay: 12,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 13,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 14,
+  },
+]
+
 // console.log(
 //   JSON.stringify(Object.keys(STAGE_MAPS).map((k) => ({
 //     ...STAGE_MAPS[k],

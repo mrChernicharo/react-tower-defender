@@ -32,13 +32,13 @@ export function useGameLoop(callback) {
   }
 
   function handleAnimationStep(frameID, tick) {
-    if (isPlaying) {
-      const diff = (tick - prevTick.current) / 60;
-      // console.log(tick, gameSpeed)
-      setClock(tick / 60);
-      callback(tick);
-      prevTick.current = tick;
-    }
+    // if (isPlaying) {
+    const diff = (tick - prevTick.current) / 60;
+    // console.log(tick, gameSpeed)
+    setClock(tick / 60);
+    callback(tick);
+    prevTick.current = tick;
+    // }
   }
 
   useAnimationFrame(handleAnimationStep);

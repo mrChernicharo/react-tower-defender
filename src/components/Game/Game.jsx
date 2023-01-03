@@ -66,10 +66,8 @@ export function Game() {
 
       updatedEnemies.push(enemy);
     }
-    // console.log(towers);
 
     // towers loop
-    // const updatedTowers = []
     for (const [j, tower] of towers.entries()) {
       let inRangeCount = 0;
       let farthestEnemy = null;
@@ -134,19 +132,6 @@ export function Game() {
       } else {
         tower.cooldown -= elapsed;
       }
-
-      // if (inRangeCount) {
-      //   console.log(tower.name, {
-      //     inRangeCount,
-      //     farthest: farthestEnemy?.name ?? null,
-      //     closest: closestEnemy?.name ?? null,
-      //     trailing: trailingEnemy?.name ?? null,
-      //     strongest: strongestEnemy?.name ?? null,
-      //   });
-      // }
-      // else {
-      //   console.log(tower.name, "no target", { inRangeCount });
-      // }
     }
     // wave ended
     if (inBattle && updatedEnemies.length === 0) {

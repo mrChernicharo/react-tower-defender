@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useStore } from "../../context/createFastContext";
-import { ENEMIES, TILE_SIZE } from "../../lib/constants";
+import { ENEMIES, TILE_SIZE, ENEMY_WAVES } from "../../lib/constants";
 
 export default function Enemies({ updateLoop }) {
   const [enemies] = useStore((store) => store.enemies);
@@ -9,83 +9,7 @@ export default function Enemies({ updateLoop }) {
 
   function createEnemies() {
     const enemiesEntrypoint = tileChain.at(-1);
-    const waveEnemies = [
-      {
-        name: "goblin",
-        lane: "left",
-        delay: 0,
-      },
-      {
-        name: "troll",
-        lane: "center",
-        delay: 0,
-      },
-      {
-        name: "orc",
-        lane: "right",
-        delay: 2,
-      },
-      {
-        name: "goblin",
-        lane: "left",
-        delay: 2,
-      },
-      {
-        name: "troll",
-        lane: "center",
-        delay: 4,
-      },
-      {
-        name: "orc",
-        lane: "right",
-        delay: 4,
-      },
-      {
-        name: "goblin",
-        lane: "left",
-        delay: 6,
-      },
-      {
-        name: "goblin",
-        lane: "right",
-        delay: 8,
-      },
-      {
-        name: "goblin",
-        lane: "center",
-        delay: 10,
-      },
-      {
-        name: "troll",
-        lane: "left",
-        delay: 6,
-      },
-      {
-        name: "orc",
-        lane: "center",
-        delay: 7,
-      },
-      {
-        name: "orc",
-        lane: "right",
-        delay: 8,
-      },
-      {
-        name: "goblin",
-        lane: "left",
-        delay: 12,
-      },
-      {
-        name: "goblin",
-        lane: "right",
-        delay: 13,
-      },
-      {
-        name: "goblin",
-        lane: "right",
-        delay: 14,
-      },
-    ].map((e) => ({
+    const waveEnemies = ENEMY_WAVES.map((e) => ({
       ...ENEMIES[e.name],
       lane: e.lane,
       delay: e.delay,

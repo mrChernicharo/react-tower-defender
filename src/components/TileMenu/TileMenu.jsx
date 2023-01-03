@@ -17,7 +17,7 @@ export default function TileMenu({
 
   if (!activeTile()) return null;
 
-  const { id, x, y, type, connected = false, hasTower = false } = activeTile();
+  const { id, x, y, type, hasTower = false } = activeTile();
 
   const tileMenus = {
     grass: (

@@ -10,6 +10,7 @@ export function GameHeader({ clock, pause, play, toggleSpeed }) {
   const [tileChain] = useStore((store) => store.tileChain);
   const [gold] = useStore((store) => store.gold);
   const [inBattle] = useStore((store) => store.inBattle);
+
   function handleChangeStage() {
     const nextStage =
       stageNumber === Object.keys(STAGE_MAPS).length - 1 ? 0 : stageNumber + 1;
@@ -21,7 +22,13 @@ export function GameHeader({ clock, pause, play, toggleSpeed }) {
       stages: STAGE_MAPS,
       enemies: [],
       towers: [],
-      tileChain: STAGE_MAPS[nextStage].tiles.filter((t) => t.startingPoint),
+      tileChain: STAGE_MAPS[nextStage].tiles
+        .filter((t) => t.startingPoint)
+        .map((t) => {
+          // no tile should be connected when starting a new stage
+          if (t.connected) delete t.connected;
+          return t;
+        }),
       gold: initialGold,
       inBattle: false,
       selectedTileId: null,

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Ring from "../../assets/Ring";
 import { useStore } from "../../context/createFastContext";
 import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../lib/constants";
@@ -16,6 +17,7 @@ export default function PathMenu({ tile, onPathTileCreated, onWaveCalled }) {
   const firstWaveRow = gridHeight - waveCount;
 
   const { id, x, y, connected } = tile;
+  console.log(tile);
 
   function canBecomePath(tile) {
     return tile.type === "grass" && !tile.hasTower;
@@ -131,6 +133,10 @@ export default function PathMenu({ tile, onPathTileCreated, onWaveCalled }) {
     }
     return adj || null;
   }
+
+  // useEffect(() => {
+  //   setTimeout(() => delete tile.connected, 100);
+  // }, [stageNumber]);
 
   return (
     <g key={`path-select-${id}`}>
