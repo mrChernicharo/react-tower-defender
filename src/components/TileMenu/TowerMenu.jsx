@@ -51,7 +51,7 @@ export default function TowerMenu({ id, x, y, type, hasTower }) {
 
   function handleCreateNewTower(tileId, x, y) {
     const newTower = { ...previewedTower, tileId, x, y };
-    console.log("create new tower!", { ...newTower });
+    console.log("create new tower!", { newTower });
 
     setStore({
       towers: [...towers, newTower],

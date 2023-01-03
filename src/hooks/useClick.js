@@ -9,9 +9,17 @@ export function useClick() {
     const clickedTower = e.target.classList.contains("tower");
     if (clickedTower) {
       const tileId = e.target.id.split("::")[0];
-      selectedTileId ? setSelectedTileId(null) : setSelectedTileId(tileId);
+      console.log('clickedTower',{ tileId, targetId: e.target.id });
+      setSelectedTileId(tileId);
+      return
+
+      // if (selectedTileId) {
+      //   setSelectedTileId(null)
+      // } else {
+      //   setSelectedTileId(tileId)
+      // }
+      // selectedTileId ? setSelectedTileId(null) : setSelectedTileId(tileId);
       // console.log("clicked tower, open menu!");
-      return;
     }
 
     const clickedEnemy = e.target.dataset?.name?.includes("enemy");
@@ -28,6 +36,7 @@ export function useClick() {
       // console.log("clicked outside");
       return setSelectedTileId(null);
     }
+    
 
     const clickedTile = e.target.dataset?.name?.includes("tile");
     const clickedTowerIcon = e.target.dataset?.name?.includes("tower-icon");
@@ -59,6 +68,8 @@ export function useClick() {
     }
 
     if (clickedTile) {
+      console.log("clicked tile!", e.target.id, selectedTileId);
+
       // clicked same tile
       if (e.target.id === selectedTileId) {
         return setSelectedTileId(null);

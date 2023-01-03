@@ -7,6 +7,7 @@ import {
   TILE_SIZE,
 } from "../../lib/constants";
 import { getGridHeight, getGridWidth } from "../../lib/helpers";
+import Tower from "../Tower/Tower";
 const pathIcon = "⛏";
 
 export default function Tiles() {
@@ -90,16 +91,10 @@ export default function Tiles() {
       )}
 
       <g>
-        {towers.map((tower) => (
-          <circle
-            key={tower.tileId}
-            id={`${tower.tileId}::${tower.name}`}
-            className="tower"
-            cx={tower.x}
-            cy={tower.y}
-            r={20}
-            fill={tower.fill}
-          />
+        {towers.map((tower, i) => (
+          <g key={`${tower.tileId}::${tower.name}`}>
+            <Tower tower={tower} />
+          </g>
         ))}
       </g>
     </>
