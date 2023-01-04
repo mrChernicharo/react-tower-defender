@@ -74,7 +74,6 @@ export function Game() {
 
     // bullets loop
     for (const [b, bullet] of bullets.current.entries()) {
-      // console.log(b, bullet);
       const bulletPath = `M ${bullet.pos.x} ${bullet.pos.y} L ${bullet.enemyPos.x} ${bullet.enemyPos.y}`;
 
       let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
