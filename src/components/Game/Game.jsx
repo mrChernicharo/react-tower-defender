@@ -10,6 +10,8 @@ import EnemyPath from "../Enemies/EnemyPath";
 import { useClick } from "../../hooks/useClick";
 import { getDistance } from "../../lib/helpers";
 
+const SPEED_FACTOR = 0.1;
+
 export function Game() {
   useClick();
   const currClock = useRef(0);
@@ -25,7 +27,8 @@ export function Game() {
 
   const [lanePaths, setLanePaths] = useState(null);
   const [wavesTimes, setWavesTimes] = useState({});
-  const [bullets, setBullets] = useState([]);
+  const bullets = useRef([]);
+  // const [bullets, setBullets] = useState([]);
 
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
@@ -54,7 +57,8 @@ export function Game() {
 
         const prog =
           enemyPath.length -
-          (enemyPath.length - (enemy.progress + enemy.speed * gameSpeed * 0.1));
+          (enemyPath.length -
+            (enemy.progress + enemy.speed * gameSpeed * SPEED_FACTOR));
 
         const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
 
@@ -68,7 +72,19 @@ export function Game() {
       updatedEnemies.push(enemy);
     }
 
-    for (const bullet of bullets) {
+    // bullets loop
+    for (const [b, bullet] of bullets.current.entries()) {
+      // console.log(b, bullet);
+      const bulletPath = `M ${bullet.pos.x} ${bullet.pos.y} L ${bullet.enemyPos.x} ${bullet.enemyPos.y}`;
+
+      let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", bulletPath);
+      const len = path.getTotalLength();
+      const nextPos = path.getPointAtLength(
+        bullet.speed * gameSpeed * SPEED_FACTOR
+      );
+
+      bullet.pos = nextPos;
     }
 
     // towers loop
@@ -142,8 +158,9 @@ export function Game() {
           enemyPos: targetEnemy.pos,
           pos: tower.pos,
         };
-        setBullets((prev) => [...prev, newBullet]);
+        bullets.current = [...bullets.current, newBullet];
 
+        // setBullets((prev) => [...prev, newBullet]);
         // const hitEnemy = tower.shoot(targetEnemy);
         // if (hitEnemy) {
         //   const { i, id } = hitEnemy;
@@ -155,8 +172,7 @@ export function Game() {
     // wave ended
     if (inBattle && updatedEnemies.length === 0) {
       console.log("wave ended!");
-
-      setBullets([]);
+      bullets.current = [];
 
       setStore({
         inBattle: false,
@@ -184,12 +200,6 @@ export function Game() {
     }
   }
 
-  // useEffect(() => {
-  //   console.log(enemies), [enemies];
-  // }, [enemies]);
-  // useEffect(() => {
-  //   console.log(bullets);
-  // }, [bullets]);
   return (
     <div className="text-white bg-gray-800 min-h-screen text-center">
       <GameHeader
@@ -208,7 +218,7 @@ export function Game() {
             }}
           />
           <Enemies />
-          <Shots shots={bullets} />
+          <Shots shots={bullets.current} />
           <TileMenu
             onWaveCalled={() => {
               const wave = waveNumber + 1;

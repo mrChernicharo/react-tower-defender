@@ -308,7 +308,7 @@ export const TOWERS = {
   fire: {
     name: "fire",
     damage: 50,
-    range: 200,
+    range: 160,
     rate_of_fire: 2,
     xp: 0,
     fill: "red",
@@ -318,7 +318,7 @@ export const TOWERS = {
   ice: {
     name: "ice",
     damage: 40,
-    range: 150,
+    range: 200,
     rate_of_fire: 3,
     xp: 0,
     fill: "blue",
@@ -338,7 +338,7 @@ export const TOWERS = {
   earth: {
     name: "earth",
     damage: 30,
-    range: 100,
+    range: 140,
     rate_of_fire: 4,
     xp: 0,
     fill: "brown",
