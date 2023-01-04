@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { GameHeader } from "./GameHeader";
+import { GameHeader } from "./GameHeader/GameHeader";
 import { useGameLoop } from "../../hooks/useGameLoop";
 import TileMenu from "../TileMenu/TileMenu";
 import Tiles from "../Tiles/Tiles";
 import Enemies from "../Enemies/Enemies";
+import Shots from "../Shots/Shots";
 import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 import { useClick } from "../../hooks/useClick";
@@ -24,6 +25,10 @@ export function Game() {
   const [wavesTimes, setWavesTimes] = useState({});
 
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
+
+  function handleShot(tower, enemy) {
+    console.log("handleShot", { tower, enemy });
+  }
 
   function handleGameLoop(tick) {
     currClock.current = tick / 60;
@@ -67,24 +72,30 @@ export function Game() {
 
     // towers loop
     for (const [j, tower] of towers.entries()) {
-      let inRangeCount = 0;
-      let farthestEnemy = null;
-      let trailingEnemy = null;
-      let closestEnemy = null;
-      let strongestEnemy = null;
-      let smallestDistance = Infinity;
-      let greatestProgress = -Infinity;
-      let smallestProgress = Infinity;
-      let highestHP = -Infinity;
+      let inRangeCount = 0,
+        farthestEnemy = null,
+        trailingEnemy = null,
+        closestEnemy = null,
+        strongestEnemy = null,
+        smallestDistance = Infinity,
+        greatestProgress = -Infinity,
+        smallestProgress = Infinity,
+        highestHP = -Infinity;
 
       // calculate tower cooldown
       const elapsed = waveTime - tower.lastShot;
 
       // find out what enemies are in range
       for (const [i, enemy] of updatedEnemies.entries()) {
-        const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
+        const d = getDistance(
+          tower.pos.x,
+          tower.pos.y,
+          enemy.pos.x,
+          enemy.pos.y
+        );
         const enemyInRange = d < tower.range;
 
+        // assign enemies to target based on strategy
         if (enemyInRange) {
           inRangeCount++;
 
@@ -110,23 +121,21 @@ export function Game() {
         }
       }
 
-      if (tower.cooldown <= 0 && farthestEnemy) {
-        // console.log("shoot!!!", {
-        //   tower: tower.name,
-        //   enemy: farthestEnemy.name,
-        // });
-        const hitEnemy = tower.shoot(farthestEnemy);
+      const targetEnemy = farthestEnemy; // or others
+
+      if (tower.cooldown > 0) {
+        // still cooling down...
+        tower.cooldown -= elapsed;
+      } else if (tower.cooldown <= 0 && targetEnemy) {
+        // cooldown completed. tower shoot!
+        const hitEnemy = tower.shoot(targetEnemy);
 
         if (hitEnemy) {
           const { i, id } = hitEnemy;
-          console.log({ hitEnemy });
           updatedEnemies[i] = hitEnemy;
+          tower.lastShot = waveTime;
+          tower.cooldown = tower.shotsPerSecond * 60;
         }
-
-        tower.lastShot = waveTime;
-        tower.cooldown = tower.shotsPerSecond * 60;
-      } else {
-        tower.cooldown -= elapsed;
       }
     }
     // wave ended
@@ -153,7 +162,7 @@ export function Game() {
         enemies: updatedEnemies,
       });
 
-      console.log(updatedEnemies.map((e) => e.id + " " + e.hp));
+      // console.log(updatedEnemies.map((e) => e.id + " " + e.hp));
     }
   }
 
@@ -175,6 +184,7 @@ export function Game() {
             }}
           />
           <Enemies />
+          <Shots />
           <TileMenu
             onWaveCalled={() => {
               const wave = waveNumber + 1;

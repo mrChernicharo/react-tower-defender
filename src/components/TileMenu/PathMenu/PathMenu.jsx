@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import Ring from "../../assets/Ring";
-import { useStore } from "../../context/createFastContext";
-import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../lib/constants";
-import { getGridHeight } from "../../lib/helpers";
+import Ring from "../../../assets/Ring";
+import { useStore } from "../../../context/createFastContext";
+import { pathIcons, TILE_COLORS, TILE_SIZE } from "../../../lib/constants";
+import { getGridHeight } from "../../../lib/helpers";
 
 export default function PathMenu({ tile, onPathTileCreated, onWaveCalled }) {
   const [stages] = useStore((store) => store.stages);

@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import Ring from "../../assets/Ring";
-import { useStore } from "../../context/createFastContext";
+import Ring from "../../../assets/Ring";
+import { useStore } from "../../../context/createFastContext";
 import {
   TILE_SIZE,
   TOWERS,
   HIGHLIGHTED_TILE_COLORS,
   towerIcons,
-} from "../../lib/constants";
+} from "../../../lib/constants";
+import { getDistance } from "../../../lib/helpers";
 
 export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
   // const [selectedTileId] = useStore((store) => store.selectedTileId);
@@ -65,13 +66,24 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
     const newTower = {
       ...previewedTower,
       tileId,
-      x,
-      y,
+      pos: { x, y },
       cooldown: 0,
       shotsPerSecond: 60 / previewedTower.rate_of_fire / 60,
       lastShot: 0,
       shoot(enemy) {
-        console.log("shoot this motherfucker!", { t: this, enemy });
+        const distanceToEnemy = getDistance(
+          this.pos.x,
+          this.pos.y,
+          enemy.pos.x,
+          enemy.pos.y
+        );
+
+        console.log("shoot this motherfucker!", {
+          t: this,
+          enemy,
+          distanceToEnemy,
+        });
+
         enemy.hp -= this.damage;
         return enemy;
       },

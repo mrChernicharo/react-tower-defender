@@ -1,6 +1,6 @@
 import { useStore } from "../../context/createFastContext";
-import PathMenu from "./PathMenu";
-import TowerMenu from "./TowerMenu";
+import PathMenu from "./PathMenu/PathMenu";
+import TowerMenu from "./TowerMenu/TowerMenu";
 
 export default function TileMenu({
   onPathTileCreated,

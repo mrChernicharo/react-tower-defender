@@ -1,5 +1,5 @@
-import { useStore } from "../../context/createFastContext";
-import { STAGE_MAPS, initialGold } from "../../lib/constants";
+import { useStore } from "../../../context/createFastContext";
+import { STAGE_MAPS, initialGold } from "../../../lib/constants";
 
 export function GameHeader({ clock, pause, play, toggleSpeed }) {
   const [selectedTileId] = useStore((store) => store.selectedTileId);
