@@ -64,17 +64,33 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
   function handleCreateNewTower(tileId, x, y) {
     const newTower = {
       ...previewedTower,
+      id: `${tileId}::${previewedTower.name}`,
       tileId,
-      x,
-      y,
+      pos: { x, y },
       cooldown: 0,
       shotsPerSecond: 60 / previewedTower.rate_of_fire / 60,
       lastShot: 0,
-      shoot(enemy) {
-        console.log("shoot this motherfucker!", { t: this, enemy });
-        enemy.hp -= this.damage;
-        return enemy;
-      },
+      // shots: [],
+      // shoot(enemy) {
+      //   if (!enemy) return;
+
+      //   const shot = {
+      //     id: Math.random(),
+      //     type: this.name,
+      //     target: enemy,
+      //   };
+
+      //   this.shots.push(shot);
+      //   enemy.hp -= this.damage;
+      //   const tower = this;
+
+      //   window.dispatchEvent(
+      //     new CustomEvent("shot", {
+      //       detail: { enemy, tower },
+      //     })
+      //   );
+      //   return enemy;
+      // },
     };
     console.log("create new tower!", { newTower });
 

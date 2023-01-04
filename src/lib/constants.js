@@ -307,9 +307,10 @@ export const ENEMY_WAVES =  [
 export const TOWERS = {
   fire: {
     name: "fire",
-    damage: 50,
-    range: 200,
-    rate_of_fire: 2,
+    damage: 10,
+    range: 140,
+    rate_of_fire: 6,
+    bullet_speed: 100,
     xp: 0,
     fill: "red",
     price: 100,
@@ -317,8 +318,9 @@ export const TOWERS = {
   ice: {
     name: "ice",
     damage: 40,
-    range: 150,
-    rate_of_fire: 3,
+    range: 250,
+    rate_of_fire: 2,
+    bullet_speed: 100,
     xp: 0,
     fill: "blue",
     price: 80,
@@ -326,7 +328,8 @@ export const TOWERS = {
   lightning: {
     name: "lightning",
     damage: 60,
-    range: 250,
+    range: 200,
+    bullet_speed: 300,
     rate_of_fire: 1,
     xp: 0,
     fill: "yellow",
@@ -335,11 +338,12 @@ export const TOWERS = {
   earth: {
     name: "earth",
     damage: 30,
-    range: 100,
+    range: 180,
+    bullet_speed: 75,
     rate_of_fire: 4,
     xp: 0,
     fill: "brown",
-    price: 60,
+    price: 100,
   },
 };
 

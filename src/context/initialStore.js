@@ -7,6 +7,7 @@ export const initialStore = {
   stages: STAGE_MAPS,
   towers: [],
   enemies: [],
+  shots: [],
   tileChain: STAGE_MAPS[0].tiles.filter((t) => t.startingPoint),
   gold: initialGold,
   inBattle: false,

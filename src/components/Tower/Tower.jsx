@@ -19,8 +19,8 @@ export default function Tower({ tower }) {
         ref={rangeRef}
         id={`${tower.tileId}::${tower.name}::range`}
         className="tower-range"
-        cx={tower.x}
-        cy={tower.y}
+        cx={tower.pos.x}
+        cy={tower.pos.y}
         r={tower.range}
         fill={tower.fill}
         pointerEvents="none"
@@ -30,8 +30,8 @@ export default function Tower({ tower }) {
       <circle
         id={`${tower.tileId}::${tower.name}`}
         className="tower"
-        cx={tower.x}
-        cy={tower.y}
+        cx={tower.pos.x}
+        cy={tower.pos.y}
         r={20}
         onMouseOver={(e) => {
           // console.log("onMouseOver", selectedTileId, tower);

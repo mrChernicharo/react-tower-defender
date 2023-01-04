@@ -8,16 +8,21 @@ import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 import { useClick } from "../../hooks/useClick";
 import { getDistance } from "../../lib/helpers";
+import Shots from "../Shots/Shots";
+
+const TIME_FACTOR = 0.1;
 
 export function Game() {
   useClick();
   const currClock = useRef(0);
+  const bulletId = useRef(0);
   const [isPlaying] = useStore((store) => store.isPlaying);
   const [inBattle] = useStore((store) => store.inBattle);
   const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
   const [towers] = useStore((store) => store.towers);
   const [gold] = useStore((store) => store.gold);
+  const [shots] = useStore((store) => store.shots);
   const [enemies, setStore] = useStore((store) => store.enemies);
 
   const [lanePaths, setLanePaths] = useState(null);
@@ -34,8 +39,11 @@ export function Game() {
       lastShot: 0,
     }));
 
+    // console.log(waveTime);
+
     // getUpdatedEnemies
     const updatedEnemies = [];
+    const newShots = [];
     for (const [i, enemy] of enemies.entries()) {
       const endReached = enemy.percProgress > 100;
       const isDead = enemy.hp <= 0;
@@ -49,9 +57,11 @@ export function Game() {
       if (waveTime >= enemy.delay) {
         const enemyPath = lanePaths[enemy.lane];
 
+        // calculate enemy progress and next position
         const prog =
           enemyPath.length -
-          (enemyPath.length - (enemy.progress + enemy.speed * gameSpeed * 0.1));
+          (enemyPath.length -
+            (enemy.progress + enemy.speed * gameSpeed * TIME_FACTOR));
 
         const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
 
@@ -82,14 +92,19 @@ export function Game() {
 
       // find out what enemies are in range
       for (const [i, enemy] of updatedEnemies.entries()) {
-        const d = getDistance(tower.x, tower.y, enemy.pos.x, enemy.pos.y);
-        const enemyInRange = d < tower.range;
+        const distanceToEnemy = getDistance(
+          tower.pos.x,
+          tower.pos.y,
+          enemy.pos.x,
+          enemy.pos.y
+        );
+        const enemyInRange = distanceToEnemy < tower.range;
 
         if (enemyInRange) {
           inRangeCount++;
 
-          if (d < smallestDistance) {
-            smallestDistance = d;
+          if (distanceToEnemy < smallestDistance) {
+            smallestDistance = distanceToEnemy;
             closestEnemy = enemy;
           }
 
@@ -110,23 +125,61 @@ export function Game() {
         }
       }
 
-      if (tower.cooldown <= 0 && farthestEnemy) {
-        // console.log("shoot!!!", {
-        //   tower: tower.name,
-        //   enemy: farthestEnemy.name,
-        // });
-        const hitEnemy = tower.shoot(farthestEnemy);
+      const towerShots = [];
+      const targetEnemy = farthestEnemy; // opportunity for new strategies
 
-        if (hitEnemy) {
-          const { i, id } = hitEnemy;
-          console.log({ hitEnemy });
-          updatedEnemies[i] = hitEnemy;
-        }
+      // add shot
+      if (tower.cooldown <= 0 && targetEnemy) {
+        // console.log("shot", { j, tower, targetEnemy });
+        const enemyPath = lanePaths[targetEnemy.lane];
+        const distanceToEnemy = getDistance(
+          tower.pos.x,
+          tower.pos.y,
+          targetEnemy.pos.x,
+          targetEnemy.pos.y
+        );
 
+        const timeToHit = distanceToEnemy / (tower.bullet_speed * 60);
+        const timeInTicks = distanceToEnemy / tower.bullet_speed;
+        console.log({ distanceToEnemy, tick, timeToHit, timeInTicks });
+
+        // calculate enemy progress and next position
+        const prog =
+          enemyPath.length -
+          (enemyPath.length -
+            (targetEnemy.progress +
+              targetEnemy.speed * gameSpeed * TIME_FACTOR));
+
+        const futurePos = enemyPath.getPointAtLength(enemyPath.length - prog);
+
+        // const futurePos = enemyPath.getPointAtLength(enemyPath.length - future);
+
+        const shot = {
+          id: `bullet-${bulletId.current++}`,
+          target: targetEnemy.pos,
+          pos: tower.pos,
+          tower,
+          futurePos,
+        };
+        // const targetEnemy = tower.shoot(targetEnemy);
         tower.lastShot = waveTime;
         tower.cooldown = tower.shotsPerSecond * 60;
+        towerShots.push(shot);
+
+        // if (targetEnemy) {
+        // const { i, id } = targetEnemy;
+        // updatedEnemies[i] = targetEnemy;
+
+        // console.log({ tower });
+        // }
       } else {
         tower.cooldown -= elapsed;
+      }
+
+      for (const [k, shot] of towerShots.entries()) {
+        console.log(k, { shot, lanePaths, tower, target: shot.target });
+        // shot speed, distance to enemy, time to hit enemy
+        newShots.push(shot);
       }
     }
     // wave ended
@@ -134,6 +187,7 @@ export function Game() {
       console.log("wave ended!");
       setStore({
         enemies: updatedEnemies, // []
+        shots: [], // []
         towers: initialTowers,
         inBattle: false,
       });
@@ -151,9 +205,10 @@ export function Game() {
     if (inBattle && updatedEnemies.length) {
       setStore({
         enemies: updatedEnemies,
+        ...(newShots.length > 0 && { shots: [...shots, ...newShots] }),
       });
 
-      console.log(updatedEnemies.map((e) => e.id + " " + e.hp));
+      // console.log(updatedEnemies.map((e) => e.id + " " + e.hp));
     }
   }
 
@@ -191,7 +246,7 @@ export function Game() {
               setStore(payload);
             }}
             onTowerCreated={(newTower, updatedTiles) => {
-              console.log("onTowerCreated", newTower, updatedTiles);
+              // console.log("onTowerCreated", newTower, updatedTiles);
               setStore({
                 towers: [...towers, newTower],
                 stages: updatedTiles,
@@ -203,6 +258,7 @@ export function Game() {
               }
             }}
           />
+          <Shots />
         </g>
       </svg>
 
