@@ -20,11 +20,12 @@ export function Game() {
   const [waveNumber] = useStore((store) => store.waveNumber);
   const [towers] = useStore((store) => store.towers);
   const [gold] = useStore((store) => store.gold);
-  const [shots] = useStore((store) => store.shots);
+  // const [shots] = useStore((store) => store.shots);
   const [enemies, setStore] = useStore((store) => store.enemies);
 
   const [lanePaths, setLanePaths] = useState(null);
   const [wavesTimes, setWavesTimes] = useState({});
+  const [bullets, setBullets] = useState([]);
 
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
@@ -32,7 +33,6 @@ export function Game() {
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesTimes[waveNumber]?.start || 0;
     const updatedEnemies = [];
-    const updatedBullets = [];
     const initialTowers = [...towers].map((t) => ({
       ...t,
       cooldown: 0,
@@ -66,6 +66,9 @@ export function Game() {
       }
 
       updatedEnemies.push(enemy);
+    }
+
+    for (const bullet of bullets) {
     }
 
     // towers loop
@@ -131,13 +134,15 @@ export function Game() {
         // cooldown completed. create new shot!
         tower.lastShot = waveTime;
         tower.cooldown = tower.shotsPerSecond * 60;
-        const newShot = {
+        const newBullet = {
           id: bulletCount.current++,
-          tower,
-          enemy: targetEnemy,
+          type: tower.name,
+          speed: tower.bullet_speed,
+          towerPos: tower.pos,
+          enemyPos: targetEnemy.pos,
+          pos: tower.pos,
         };
-        console.log({ newShot });
-        updatedBullets.push(newShot);
+        setBullets((prev) => [...prev, newBullet]);
 
         // const hitEnemy = tower.shoot(targetEnemy);
         // if (hitEnemy) {
@@ -150,6 +155,8 @@ export function Game() {
     // wave ended
     if (inBattle && updatedEnemies.length === 0) {
       console.log("wave ended!");
+
+      setBullets([]);
 
       setStore({
         inBattle: false,
@@ -174,24 +181,15 @@ export function Game() {
           enemies: updatedEnemies,
         });
       }
-      if (updatedBullets.length) {
-        const totalBullets = [...shots, ...updatedBullets];
-        console.log({ updatedBullets, totalBullets, shots });
-        setStore({
-          shots: [...totalBullets],
-        });
-      }
-
-      // console.log(updatedBullets.map((b) => b.id + " " + b.tower.name));
     }
   }
 
   // useEffect(() => {
   //   console.log(enemies), [enemies];
   // }, [enemies]);
-  useEffect(() => {
-    console.log(shots), [shots];
-  }, [shots]);
+  // useEffect(() => {
+  //   console.log(bullets);
+  // }, [bullets]);
   return (
     <div className="text-white bg-gray-800 min-h-screen text-center">
       <GameHeader
@@ -210,7 +208,7 @@ export function Game() {
             }}
           />
           <Enemies />
-          <Shots />
+          <Shots shots={bullets} />
           <TileMenu
             onWaveCalled={() => {
               const wave = waveNumber + 1;

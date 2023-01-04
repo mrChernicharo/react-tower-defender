@@ -313,6 +313,7 @@ export const TOWERS = {
     xp: 0,
     fill: "red",
     price: 100,
+    bullet_speed: 100
   },
   ice: {
     name: "ice",
@@ -322,6 +323,7 @@ export const TOWERS = {
     xp: 0,
     fill: "blue",
     price: 80,
+    bullet_speed: 100
   },
   lightning: {
     name: "lightning",
@@ -331,6 +333,7 @@ export const TOWERS = {
     xp: 0,
     fill: "yellow",
     price: 120,
+    bullet_speed: 200
   },
   earth: {
     name: "earth",
@@ -340,6 +343,7 @@ export const TOWERS = {
     xp: 0,
     fill: "brown",
     price: 60,
+    bullet_speed: 50
   },
 };
 
