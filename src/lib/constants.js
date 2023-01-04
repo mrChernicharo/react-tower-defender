@@ -12,13 +12,13 @@ export const HIGHLIGHTED_TILE_COLORS = {
   path: "orange",
 };
 
-export const initialGold = 300;
+export const initialGold = 1000;
 
 export const STAGE_MAPS = {
   0: {
     id: 0,
     name: "Ridge Narrows",
-    waveCount: 8,
+    waveCount: 10,
     tiles: [
       { id: "0:0", x: 0, y: 0, type: "grass" },
       {
@@ -225,7 +225,7 @@ export const STAGE_MAPS = {
   },
 };
 
-export const ENEMY_WAVES =  [
+export const ENEMY_WAVES = [
   {
     name: "goblin",
     lane: "left",
@@ -291,7 +291,7 @@ export const ENEMY_WAVES =  [
     lane: "right",
     delay: 24,
   },
-]
+];
 
 // console.log(
 //   JSON.stringify(Object.keys(STAGE_MAPS).map((k) => ({
@@ -377,7 +377,7 @@ export const towerIcons = [
     tx: 0,
     ty: -75,
     fill: "red",
-    towerInfo: TOWERS['fire']
+    towerInfo: TOWERS["fire"],
   },
   {
     id: 2,
@@ -385,7 +385,7 @@ export const towerIcons = [
     tx: 75,
     ty: 0,
     fill: "yellow",
-    towerInfo: TOWERS['lightning']
+    towerInfo: TOWERS["lightning"],
   },
   {
     id: 3,
@@ -393,7 +393,7 @@ export const towerIcons = [
     tx: -75,
     ty: 0,
     fill: "blue",
-    towerInfo: TOWERS['ice']
+    towerInfo: TOWERS["ice"],
   },
   {
     id: 4,
@@ -401,7 +401,7 @@ export const towerIcons = [
     tx: 0,
     ty: 75,
     fill: "brown",
-    towerInfo: TOWERS['earth']
+    towerInfo: TOWERS["earth"],
   },
 ];
 

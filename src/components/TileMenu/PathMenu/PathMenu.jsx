@@ -17,7 +17,7 @@ export default function PathMenu({ tile, onPathTileCreated, onWaveCalled }) {
   const firstWaveRow = gridHeight - waveCount;
 
   const { id, x, y, connected } = tile;
-  console.log(tile);
+  // console.log(tile);
 
   function canBecomePath(tile) {
     return tile.type === "grass" && !tile.hasTower;

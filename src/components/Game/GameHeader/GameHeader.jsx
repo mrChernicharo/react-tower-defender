@@ -15,13 +15,14 @@ export function GameHeader({ clock, pause, play, toggleSpeed }) {
     const nextStage =
       stageNumber === Object.keys(STAGE_MAPS).length - 1 ? 0 : stageNumber + 1;
 
-    // reset tiles and waveNumber
+    // RESET reset store
     setStore({
       waveNumber: null,
       stageNumber: nextStage,
       stages: STAGE_MAPS,
       enemies: [],
       towers: [],
+      // shots: [],
       tileChain: STAGE_MAPS[nextStage].tiles
         .filter((t) => t.startingPoint)
         .map((t) => {

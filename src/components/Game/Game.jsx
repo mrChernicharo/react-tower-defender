@@ -13,12 +13,14 @@ import { getDistance } from "../../lib/helpers";
 export function Game() {
   useClick();
   const currClock = useRef(0);
+  const bulletCount = useRef(0);
   const [isPlaying] = useStore((store) => store.isPlaying);
   const [inBattle] = useStore((store) => store.inBattle);
   const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
   const [towers] = useStore((store) => store.towers);
   const [gold] = useStore((store) => store.gold);
+  const [shots] = useStore((store) => store.shots);
   const [enemies, setStore] = useStore((store) => store.enemies);
 
   const [lanePaths, setLanePaths] = useState(null);
@@ -26,21 +28,17 @@ export function Game() {
 
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
-  function handleShot(tower, enemy) {
-    console.log("handleShot", { tower, enemy });
-  }
-
   function handleGameLoop(tick) {
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesTimes[waveNumber]?.start || 0;
+    const updatedEnemies = [];
+    const updatedBullets = [];
     const initialTowers = [...towers].map((t) => ({
       ...t,
       cooldown: 0,
       lastShot: 0,
     }));
 
-    // getUpdatedEnemies
-    const updatedEnemies = [];
     for (const [i, enemy] of enemies.entries()) {
       const endReached = enemy.percProgress > 100;
       const isDead = enemy.hp <= 0;
@@ -121,30 +119,43 @@ export function Game() {
         }
       }
 
+      // target assigned
       const targetEnemy = farthestEnemy; // or others
 
+      // proceed to shot logic
       if (tower.cooldown > 0) {
         // still cooling down...
         tower.cooldown -= elapsed;
-      } else if (tower.cooldown <= 0 && targetEnemy) {
-        // cooldown completed. tower shoot!
-        const hitEnemy = tower.shoot(targetEnemy);
+      }
+      if (tower.cooldown <= 0 && targetEnemy) {
+        // cooldown completed. create new shot!
+        tower.lastShot = waveTime;
+        tower.cooldown = tower.shotsPerSecond * 60;
+        const newShot = {
+          id: bulletCount.current++,
+          tower,
+          enemy: targetEnemy,
+        };
+        console.log({ newShot });
+        updatedBullets.push(newShot);
 
-        if (hitEnemy) {
-          const { i, id } = hitEnemy;
-          updatedEnemies[i] = hitEnemy;
-          tower.lastShot = waveTime;
-          tower.cooldown = tower.shotsPerSecond * 60;
-        }
+        // const hitEnemy = tower.shoot(targetEnemy);
+        // if (hitEnemy) {
+        //   const { i, id } = hitEnemy;
+        //   updatedEnemies[i] = hitEnemy;
+        // }
       }
     }
+
     // wave ended
     if (inBattle && updatedEnemies.length === 0) {
       console.log("wave ended!");
+
       setStore({
+        inBattle: false,
         enemies: updatedEnemies, // []
         towers: initialTowers,
-        inBattle: false,
+        shots: [],
       });
 
       const currWave = waveNumber || 1;
@@ -157,15 +168,30 @@ export function Game() {
     }
 
     // wave continues: update enemies
-    if (inBattle && updatedEnemies.length) {
-      setStore({
-        enemies: updatedEnemies,
-      });
+    if (inBattle) {
+      if (updatedEnemies.length) {
+        setStore({
+          enemies: updatedEnemies,
+        });
+      }
+      if (updatedBullets.length) {
+        const totalBullets = [...shots, ...updatedBullets];
+        console.log({ updatedBullets, totalBullets, shots });
+        setStore({
+          shots: [...totalBullets],
+        });
+      }
 
-      // console.log(updatedEnemies.map((e) => e.id + " " + e.hp));
+      // console.log(updatedBullets.map((b) => b.id + " " + b.tower.name));
     }
   }
 
+  // useEffect(() => {
+  //   console.log(enemies), [enemies];
+  // }, [enemies]);
+  useEffect(() => {
+    console.log(shots), [shots];
+  }, [shots]);
   return (
     <div className="text-white bg-gray-800 min-h-screen text-center">
       <GameHeader
