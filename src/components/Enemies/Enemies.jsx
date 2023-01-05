@@ -25,14 +25,33 @@ export default function Enemies({ updateLoop }) {
     return waveEnemies;
   }
 
+  const digitCenter = (n) => {
+    let x = 0;
+    switch (String(n.toFixed(0)).length) {
+      case 1:
+        x = 0;
+        break;
+      case 2:
+        x = 10;
+        break;
+      case 3:
+        x = 15;
+        break;
+      case 4:
+        x = 20;
+        break;
+      case 5:
+        x = 25;
+        break;
+    }
+    return n - x;
+  };
+
   useEffect(() => {
-    console.log({ inBattle });
-    if (!inBattle) {
-    } else {
+    if (inBattle) {
       setStore({
         enemies: createEnemies(),
       });
-      // updateLoop();
     }
   }, [inBattle]);
 
@@ -41,14 +60,18 @@ export default function Enemies({ updateLoop }) {
       {inBattle &&
         enemies?.map((e, i) => {
           return (
-            <circle
-              key={`${e.name}::${i}`}
-              data-name="enemy"
-              fill={e.fill}
-              r={e.size}
-              cx={e.pos.x}
-              cy={e.pos.y}
-            />
+            <g key={`${e.name}::${i}`}>
+              <text x={digitCenter(e.pos.x)} y={e.pos.y - 15}>
+                {e.hp}
+              </text>
+              <circle
+                data-name="enemy"
+                fill={e.fill}
+                r={e.size}
+                cx={e.pos.x}
+                cy={e.pos.y}
+              />
+            </g>
           );
         })}
     </>
