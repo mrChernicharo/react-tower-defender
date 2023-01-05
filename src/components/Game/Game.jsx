@@ -51,7 +51,7 @@ export function Game() {
     }
 
     if (!enemies.current) {
-      enemies.current = storeEnemies;
+      enemies.current = storeEnemies.map((e, i) => ({ ...e, index: i }));
     }
     if (!bullets.current) {
       bullets.current = [];
@@ -91,9 +91,11 @@ export function Game() {
           id: bulletCount.current++,
           type: tower.name,
           speed: tower.bullet_speed,
+          damage: tower.damage,
           towerPos: tower.pos,
           enemyPos: targetEnemy.pos,
           pos: tower.pos,
+          enemyId: targetEnemy.id,
           // enemy: targetEnemy,
           // tower: tower,
         };
@@ -114,20 +116,43 @@ export function Game() {
 
     // console.log(towers.current.map((t) => t.cooldown));
 
-    console.log(bullets.current);
+    // MOVE BULLETS, HANDLE ENEMY HIT (UPDATE/REMOVE ENEMY & BULLET REMOVAL)
     for (let [b, bullet] of bullets.current.entries()) {
+      const bulletPath = `M ${bullet.pos.x} ${bullet.pos.y} L ${bullet.enemyPos.x} ${bullet.enemyPos.y}`;
+
+      let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", bulletPath);
+
+      const nextPos = path.getPointAtLength(
+        bullet.speed * gameSpeed * SPEED_FACTOR
+      );
+
       // move bullet
-      // if hit enemy
-      //    remove bullet
-      //    handle enemy hit
+      bullet.pos = nextPos;
+
+      const hit =
+        Math.abs(bullet.enemyPos.x - bullet.pos.x) < 5 &&
+        Math.abs(bullet.enemyPos.y - bullet.pos.y < 5);
+
+      if (hit) {
+        bullet.hit = true;
+        const enemyIndex = enemies.current.findIndex(
+          (e) => e.id === bullet.enemyId
+        );
+
+        if (enemies.current[enemyIndex]?.hp) {
+          enemies.current[enemyIndex].hp -= bullet.damage;
+        }
+      }
     }
 
-    // console.log(bullets.current);
+    const enemiesToRemove = [];
     // MOVE ENEMY
     for (let [e, enemy] of enemies.current.entries()) {
       const endReached = enemy.percProgress > 100;
-      if (endReached) {
-        enemies.current.splice(e, 1);
+      const isDead = enemy.hp <= 0;
+      if (endReached || isDead) {
+        enemiesToRemove.push(enemy.id);
       }
 
       // don't move enemy unless we're past it's delay time
@@ -146,136 +171,13 @@ export function Game() {
       }
     }
 
-    // console.log(enemies.current, towers.current, bullets.current);
-
-    // for (const [i, enemy] of enemies.entries()) {
-    //   const endReached = enemy.percProgress > 100;
-    //   const isDead = enemy.hp <= 0;
-
-    //   // remove enemies who have reached the end or who died
-    //   if (endReached || isDead) {
-    //     continue;
-    //   }
-
-    //   // don't move enemy unless we're past it's delay time
-    //   if (waveTime >= enemy.delay) {
-    //     const enemyPath = lanePaths[enemy.lane];
-
-    //     const prog =
-    //       enemyPath.length -
-    //       (enemyPath.length -
-    //         (enemy.progress + enemy.speed * gameSpeed * SPEED_FACTOR));
-
-    //     const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
-
-    //     // update enemies' positions and progress
-    //     enemy.percProgress = (prog / enemyPath.length) * 100;
-    //     enemy.progress = prog;
-    //     enemy.pos.x = nextPos.x + 50;
-    //     enemy.pos.y = nextPos.y + 50;
-    //   }
-
-    //   updatedEnemies.push(enemy);
-    // }
-
-    // // bullets loop
-    // for (const [b, bullet] of bullets.current.entries()) {
-    //   const bulletPath = `M ${bullet.pos.x} ${bullet.pos.y} L ${bullet.enemyPos.x} ${bullet.enemyPos.y}`;
-
-    //   let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    //   path.setAttribute("d", bulletPath);
-    //   const len = path.getTotalLength();
-    //   const nextPos = path.getPointAtLength(
-    //     bullet.speed * gameSpeed * SPEED_FACTOR
-    //   );
-
-    //   bullet.pos = nextPos;
-    // }
-
-    // // towers loop
-    // for (const [j, tower] of towers.entries()) {
-    //   let inRangeCount = 0,
-    //     farthestEnemy = null,
-    //     trailingEnemy = null,
-    //     closestEnemy = null,
-    //     strongestEnemy = null,
-    //     smallestDistance = Infinity,
-    //     greatestProgress = -Infinity,
-    //     smallestProgress = Infinity,
-    //     highestHP = -Infinity;
-
-    //   // calculate tower cooldown
-    //   const elapsed = waveTime - tower.lastShot;
-
-    //   // find out what enemies are in range
-    //   for (const [i, enemy] of updatedEnemies.entries()) {
-    //     const d = getDistance(
-    //       tower.pos.x,
-    //       tower.pos.y,
-    //       enemy.pos.x,
-    //       enemy.pos.y
-    //     );
-    //     const enemyInRange = d < tower.range;
-
-    //     // assign enemies to target based on strategy
-    //     if (enemyInRange) {
-    //       inRangeCount++;
-
-    //       if (d < smallestDistance) {
-    //         smallestDistance = d;
-    //         closestEnemy = enemy;
-    //       }
-
-    //       if (enemy.progress > greatestProgress) {
-    //         greatestProgress = enemy.progress;
-    //         farthestEnemy = enemy;
-    //       }
-
-    //       if (enemy.progress < smallestProgress) {
-    //         smallestProgress = enemy.progress;
-    //         trailingEnemy = enemy;
-    //       }
-
-    //       if (enemy.hp > highestHP) {
-    //         highestHP = enemy.hp;
-    //         strongestEnemy = enemy;
-    //       }
-    //     }
-    //   }
-
-    //   // target assigned
-    //   const targetEnemy = farthestEnemy; // or others
-
-    //   // proceed to shot logic
-    //   if (tower.cooldown > 0) {
-    //     // still cooling down...
-    //     tower.cooldown -= elapsed;
-    //   }
-    //   if (tower.cooldown <= 0 && targetEnemy) {
-    //     // cooldown completed. create new shot!
-    //     tower.lastShot = waveTime;
-    //     tower.cooldown = tower.shotsPerSecond * 60;
-    //     const newBullet = {
-    //       id: bulletCount.current++,
-    //       type: tower.name,
-    //       speed: tower.bullet_speed,
-    //       towerPos: tower.pos,
-    //       enemyPos: targetEnemy.pos,
-    //       pos: tower.pos,
-    //     };
-    //     bullets.current = [...bullets.current, newBullet];
-
-    // setBullets((prev) => [...prev, newBullet]);
-    // const hitEnemy = tower.shoot(targetEnemy);
-    // if (hitEnemy) {
-    //   const { i, id } = hitEnemy;
-    //   updatedEnemies[i] = hitEnemy;
-    // }
-    // }
-    // }
+    // REMOVE FULFILLED BULLETS. REMOVE DEAD ENEMIES OR ENEMIES THAT REACHED THE FINISH LINE
+    bullets.current = bullets.current.filter((b) => !b.hit);
+    enemies.current = enemies.current.filter(
+      (e, i) => !enemiesToRemove.includes(e.id)
+    );
 
     // wave ended
-    // if (inBattle && tick === 300) {
     if (inBattle && enemies.current.length < 1) {
       console.log("wave ended!");
 
@@ -323,7 +225,7 @@ export function Game() {
             }}
           />
           <Enemies />
-          {/* <Shots shots={bullets.current} /> */}
+          <Shots shots={bullets.current} />
           <TileMenu
             onWaveCalled={() => {
               const wave = waveNumber + 1;
@@ -365,3 +267,53 @@ export function Game() {
     </div>
   );
 }
+
+// for (const [j, tower] of towers.entries()) {
+//   let inRangeCount = 0,
+//     farthestEnemy = null,
+//     trailingEnemy = null,
+//     closestEnemy = null,
+//     strongestEnemy = null,
+//     smallestDistance = Infinity,
+//     greatestProgress = -Infinity,
+//     smallestProgress = Infinity,
+//     highestHP = -Infinity;
+
+//   // calculate tower cooldown
+//   const elapsed = waveTime - tower.lastShot;
+
+//   // find out what enemies are in range
+//   for (const [i, enemy] of updatedEnemies.entries()) {
+//     const d = getDistance(
+//       tower.pos.x,
+//       tower.pos.y,
+//       enemy.pos.x,
+//       enemy.pos.y
+//     );
+//     const enemyInRange = d < tower.range;
+
+//     // assign enemies to target based on strategy
+//     if (enemyInRange) {
+//       inRangeCount++;
+
+//       if (d < smallestDistance) {
+//         smallestDistance = d;
+//         closestEnemy = enemy;
+//       }
+
+//       if (enemy.progress > greatestProgress) {
+//         greatestProgress = enemy.progress;
+//         farthestEnemy = enemy;
+//       }
+
+//       if (enemy.progress < smallestProgress) {
+//         smallestProgress = enemy.progress;
+//         trailingEnemy = enemy;
+//       }
+
+//       if (enemy.hp > highestHP) {
+//         highestHP = enemy.hp;
+//         strongestEnemy = enemy;
+//       }
+//     }
+//   }

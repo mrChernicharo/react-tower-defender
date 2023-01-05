@@ -3,7 +3,7 @@ import { TOWERS } from "../../lib/constants";
 export default function Shots({ shots }) {
   return (
     <g>
-      {shots
+      {(shots || [])
         .filter((s) => s.pos.x !== s.enemyPos.x && s.pos.y !== s.enemyPos.y)
         .map(({ id, pos, enemyPos, type }) => (
           <g key={id}>
