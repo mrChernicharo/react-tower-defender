@@ -60,14 +60,20 @@ export default function Tiles() {
                 />
               ) : null}
               {enemyEntrance ? (
-                <rect
-                  width={TILE_SIZE / 2}
-                  height={20}
-                  fill="white"
-                  x={x * TILE_SIZE + TILE_SIZE * 0.25}
-                  y={y * TILE_SIZE + TILE_SIZE * 0.375}
+                <circle
+                  r={20}
+                  cx={x * TILE_SIZE + TILE_SIZE / 2}
+                  cy={y * TILE_SIZE + TILE_SIZE / 2}
+                  opacity={0.6}
                 />
-              ) : null}
+              ) : // <rect
+              //   width={TILE_SIZE / 2}
+              //   height={20}
+              //   fill="white"
+              //   x={x * TILE_SIZE + TILE_SIZE * 0.25}
+              //   y={y * TILE_SIZE + TILE_SIZE * 0.375}
+              // />
+              null}
               {/* {exits
                 ? Object.keys(exits).map((k) => (
                     <circle

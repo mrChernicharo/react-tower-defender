@@ -8,7 +8,7 @@ import Bullets from "../Bullets/Bullets";
 import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 import { useClick } from "../../hooks/useClick";
-import { getDistance } from "../../lib/helpers";
+import { getAngle, getDistance } from "../../lib/helpers";
 import { TOWERS, ENEMIES } from "../../lib/constants";
 
 const SPEED_FACTOR = 0.1;
@@ -32,12 +32,12 @@ export function Game() {
 
   const [lanePaths, setLanePaths] = useState(null);
   const [wavesData, setWavesData] = useState({});
-  // const bullets = useRef([]);
-  // const [bullets, setBullets] = useState([]);
 
   const { clock, pause, play, toggleSpeed } = useGameLoop(handleGameLoop);
 
   function handleGameLoop(tick) {
+    // if (tick % 2 === 0) return; // lets make it 30 FPS
+
     currClock.current = tick / 60;
     const waveTime = currClock.current - wavesData[waveNumber]?.start || 0;
     const waveInitialTowers = [...storeTowers].map((t) => ({
@@ -51,7 +51,7 @@ export function Game() {
     }
 
     if (!enemies.current) {
-      enemies.current = storeEnemies.map((e, i) => ({ ...e, index: i }));
+      enemies.current = storeEnemies.map((e, i) => ({ ...e, rotation: -90 }));
     }
     if (!bullets.current) {
       bullets.current = [];
@@ -147,12 +147,19 @@ export function Game() {
           enemyPath.length -
           (enemyPath.length -
             (enemy.progress + enemy.speed * gameSpeed * SPEED_FACTOR));
+
         const nextPos = enemyPath.getPointAtLength(enemyPath.length - prog);
-        // update enemies' positions and progress
+        // update enemies' progress
         enemy.percProgress = (prog / enemyPath.length) * 100;
         enemy.progress = prog;
+
+        // get enemy facing angle: find angle considering pos and nextPos
+        // prettier-ignore
+        const angle = getAngle(enemy.pos.x, enemy.pos.y, nextPos.x + 50, nextPos.y + 50);
+
         enemy.pos.x = nextPos.x + 50;
         enemy.pos.y = nextPos.y + 50;
+        enemy.rotation = angle;
       }
     }
 
@@ -245,13 +252,13 @@ export function Game() {
         </g>
       </svg>
 
-      <pre className="text-left">
+      {/* <pre className="text-left">
         {JSON.stringify(
           storeEnemies?.map((e) => `${e.name} hp:${e.hp} delay:${e.delay}`),
           null,
           2
         )}
-      </pre>
+      </pre> */}
     </div>
   );
 }

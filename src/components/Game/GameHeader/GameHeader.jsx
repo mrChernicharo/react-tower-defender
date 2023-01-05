@@ -55,7 +55,12 @@ export function GameHeader({ clock, pause, play, toggleSpeed }) {
           <div>{isPlaying ? "Playing" : "Paused"}</div>
         </div>
         <div>
-          <button className="btn" onClick={() => play()}>
+          <button
+            className="btn"
+            style={{ opacity: inBattle ? 1 : 0.5 }}
+            disabled={!inBattle}
+            onClick={() => play()}
+          >
             Play
           </button>
           <button className="btn" onClick={() => pause()}>

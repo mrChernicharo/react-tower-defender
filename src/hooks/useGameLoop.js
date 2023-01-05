@@ -20,8 +20,9 @@ export function useGameLoop(callback) {
     let newSpeed;
     if (gameSpeed === 1) newSpeed = 2;
     if (gameSpeed === 2) newSpeed = 4;
-    if (gameSpeed === 4) newSpeed = 8;
-    if (gameSpeed === 8) newSpeed = 1;
+    if (gameSpeed === 4) newSpeed = 1;
+    // if (gameSpeed === 4) newSpeed = 8;
+    // if (gameSpeed === 8) newSpeed = 1;
 
     setStore({ gameSpeed: newSpeed });
 

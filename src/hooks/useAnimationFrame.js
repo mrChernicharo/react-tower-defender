@@ -13,7 +13,7 @@ export function useAnimationFrame(callback) {
     if (speed === 1) incr = 1;
     if (speed === 2) incr = 2;
     if (speed === 4) incr = 4;
-    if (speed === 8) incr = 8;
+    // if (speed === 8) incr = 8;
     // console.log("increment tick by", incr)
     tick.current += incr;
   }
