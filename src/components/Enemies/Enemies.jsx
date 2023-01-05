@@ -86,10 +86,12 @@ export default function Enemies() {
               /> */}
               <g>
                 <polygon
-                  transform={`rotate(${e.rotation}, ${e.pos.x}, ${e.pos.y})`}
                   points={getPoints(e.pos)}
                   fill={e.fill}
                   stroke={e.fill}
+                  transform={`rotate(${e.rotation || 0}, ${e.pos.x}, ${
+                    e.pos.y
+                  })`}
                 />
               </g>
             </g>

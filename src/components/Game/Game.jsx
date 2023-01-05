@@ -26,7 +26,7 @@ export function Game() {
   const [gameSpeed] = useStore((store) => store.gameSpeed);
   const [waveNumber] = useStore((store) => store.waveNumber);
   const [storeTowers] = useStore((store) => store.towers);
-  const [gold] = useStore((store) => store.gold);
+  const [storeGold] = useStore((store) => store.gold);
   const [storeShots] = useStore((store) => store.shots);
   const [storeEnemies, setStore] = useStore((store) => store.enemies);
 
@@ -51,7 +51,11 @@ export function Game() {
     }
 
     if (!enemies.current) {
-      enemies.current = storeEnemies.map((e, i) => ({ ...e, rotation: -90 }));
+      enemies.current = storeEnemies?.map((e, i) => ({
+        ...e,
+        spawned: false,
+        rotation: -90,
+      }));
     }
     if (!bullets.current) {
       bullets.current = [];
@@ -82,7 +86,7 @@ export function Game() {
 
       if (tower.cooldown > 0) {
         tower.cooldown = diff;
-      } else if (targetEnemy) {
+      } else if (targetEnemy?.spawned) {
         // console.log("SHOOT!");
         tower.cooldown = freshCooldown;
         tower.lastShot = waveTime;
@@ -132,8 +136,8 @@ export function Game() {
     }
 
     const enemiesToRemove = [];
-    // MOVE ENEMY
-    for (let [e, enemy] of enemies.current.entries()) {
+    // MOVE ENEMIES
+    for (let [e, enemy] of enemies.current?.entries()) {
       const endReached = enemy.percProgress > 100;
       const isDead = enemy.hp <= 0;
       if (endReached || isDead) {
@@ -142,6 +146,7 @@ export function Game() {
 
       // don't move enemy unless we're past it's delay time
       if (waveTime >= enemy.delay) {
+        if (!enemy.spawned) enemy.spawned = true;
         const enemyPath = lanePaths[enemy.lane];
         const prog =
           enemyPath.length -
@@ -163,11 +168,27 @@ export function Game() {
       }
     }
 
-    // REMOVE FULFILLED BULLETS. REMOVE DEAD ENEMIES OR ENEMIES THAT REACHED THE FINISH LINE
-    bullets.current = bullets.current.filter((b) => !b.hit);
-    enemies.current = enemies.current.filter(
+    // UPDATE STUFF LIKE GOLD
+    let earnedGold = 0;
+    const removedEnemies = enemies.current.filter((e, i) =>
+      enemiesToRemove.includes(e.id)
+    );
+    const lastingEnemies = enemies.current.filter(
       (e, i) => !enemiesToRemove.includes(e.id)
     );
+    const deadEnemies = removedEnemies.filter((e) => e.hp <= 0);
+
+    if (deadEnemies.length) {
+      earnedGold += deadEnemies.reduce((acc, curr) => acc + curr.gold, 0);
+    }
+
+    if (removedEnemies.length || deadEnemies.length) {
+      console.log({ lastingEnemies, removedEnemies, deadEnemies });
+    }
+
+    // REMOVE FULFILLED BULLETS. REMOVE DEAD ENEMIES OR ENEMIES THAT REACHED THE FINISH LINE
+    bullets.current = bullets.current.filter((b) => !b.hit);
+    enemies.current = lastingEnemies;
 
     // wave ended
     if (inBattle && enemies.current.length < 1) {
@@ -196,6 +217,14 @@ export function Game() {
       setStore({
         enemies: enemies.current,
       });
+
+      if (earnedGold) {
+        pause();
+        setStore({ gold: storeGold + earnedGold });
+        setTimeout(() => {
+          play();
+        }, 12);
+      }
     }
   }
 
@@ -240,7 +269,7 @@ export function Game() {
               setStore({
                 towers: towers.current,
                 stages: updatedTiles,
-                gold: gold - newTower.price,
+                gold: storeGold - newTower.price,
               });
 
               if (isPlaying) {

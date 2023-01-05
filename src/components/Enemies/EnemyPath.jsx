@@ -108,7 +108,6 @@ export default function EnemyPath({ onPathChanged }) {
 
   return (
     <>
-      {/* TILE EXIT DOTS */}
       <g transform="translate(50,50)">
         {tileChain.map((tile) => {
           const { id, exits } = tile;
@@ -120,14 +119,13 @@ export default function EnemyPath({ onPathChanged }) {
                   r={6}
                   cx={exits[k].x * TILE_SIZE}
                   cy={exits[k].y * TILE_SIZE}
-                  fill="#ddd"
+                  fill="none"
                 />
               ))}
             </g>
           );
         })}
 
-        {/* PATHS */}
         {paths.map(({ id, d, ref }) => (
           <path
             key={id}
@@ -135,7 +133,7 @@ export default function EnemyPath({ onPathChanged }) {
             d={d}
             strokeWidth={3}
             strokeDasharray={5}
-            stroke="#ddd"
+            stroke="none"
             fill="none"
           />
         ))}
