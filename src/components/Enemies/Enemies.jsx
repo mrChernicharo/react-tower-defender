@@ -39,7 +39,7 @@ export default function Enemies({ updateLoop }) {
   return (
     <>
       {inBattle &&
-        enemies.map((e, i) => {
+        enemies?.map((e, i) => {
           return (
             <circle
               key={`${e.name}::${i}`}

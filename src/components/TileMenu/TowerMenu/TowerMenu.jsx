@@ -67,7 +67,7 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
       ...previewedTower,
       tileId,
       pos: { x, y },
-      cooldown: 0,
+      cooldown: 60 / previewedTower.rate_of_fire / 60,
       shotsPerSecond: 60 / previewedTower.rate_of_fire / 60,
       lastShot: 0,
       shoot(enemy) {
