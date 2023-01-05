@@ -8,6 +8,8 @@ import {
   towerIcons,
 } from "../../../lib/constants";
 import { getDistance } from "../../../lib/helpers";
+const checkedIcon = "✔️";
+const noGoldIcon = "⛔️";
 
 export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
   // const [selectedTileId] = useStore((store) => store.selectedTileId);
@@ -23,6 +25,7 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
   const [previewedTower, setPreviewedTower] = useState(null);
 
   const towerSelected = (name) => subMenuOpen && previewedTower.name === name;
+  const canAfford = (price) => gold >= price;
 
   function getUpdatedTiles(tileId) {
     const tile = tiles.find((t) => t.id === tileId);
@@ -70,23 +73,6 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
       cooldown: 60 / previewedTower.rate_of_fire / 60,
       shotsPerSecond: 60 / previewedTower.rate_of_fire / 60,
       lastShot: 0,
-      shoot(enemy) {
-        const distanceToEnemy = getDistance(
-          this.pos.x,
-          this.pos.y,
-          enemy.pos.x,
-          enemy.pos.y
-        );
-
-        console.log("shoot this motherfucker!", {
-          t: this,
-          enemy,
-          distanceToEnemy,
-        });
-
-        enemy.hp -= this.damage;
-        return enemy;
-      },
     };
     console.log("create new tower!", { newTower });
 
@@ -122,14 +108,21 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
         <g key={`${id}-${name}`}>
           <circle
             data-name={getIconDataName(name)}
+            data-affordable={canAfford(towerInfo.price) ? 1 : 0}
             cx={x * TILE_SIZE + 50 + TILE_SIZE / 2 + tx}
             cy={y * TILE_SIZE + 50 + TILE_SIZE / 2 + ty}
-            fill={towerSelected(name) ? "#0d7" : fill}
+            fill={
+              towerSelected(name)
+                ? canAfford(towerInfo.price)
+                  ? "#0d7"
+                  : "#555"
+                : fill
+            }
             r={25}
             onClick={() => {
-              console.log({ towerInfo });
               handleIconClick(id, name);
             }}
+            opacity={canAfford(towerInfo.price) ? 1 : 0.3}
           />
           {towerSelected(name) && (
             <>
@@ -163,7 +156,7 @@ export default function TowerMenu({ id, x, y, hasTower, onTowerCreated }) {
                 fontSize={32}
                 fill="#fff"
               >
-                ✔
+                {canAfford(towerInfo.price) ? checkedIcon : noGoldIcon}
               </text>
             </>
           )}

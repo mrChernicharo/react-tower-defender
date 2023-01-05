@@ -51,7 +51,7 @@ export function Game() {
     }
 
     if (!enemies.current) {
-      enemies.current = storeEnemies?.map((e, i) => ({
+      enemies.current = storeEnemies.map((e, i) => ({
         ...e,
         spawned: false,
         rotation: -90,
@@ -60,6 +60,8 @@ export function Game() {
     if (!bullets.current) {
       bullets.current = [];
     }
+
+    console.log(enemies.current);
 
     // ENEMY IN RANGE, TOWER READY? CREATE BULLET
     for (let [t, tower] of towers.current.entries()) {
@@ -196,7 +198,7 @@ export function Game() {
 
       setStore({
         inBattle: false,
-        enemies: enemies.current, // []
+        enemies: storeEnemies || [], // []
         towers: waveInitialTowers,
       });
 

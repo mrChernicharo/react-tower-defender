@@ -59,7 +59,8 @@ export function useClick() {
     }
 
     if (clickedCreateTowerIcon) {
-      // console.log(`clickedCreateTowerIcon ${e.target.dataset.name}`);
+      // console.log(`clickedCreateTowerIcon ${e.target.dataset.affordable}`);
+      if (e.target.dataset.affordable === '0') return
       return setTimeout(() => setStore({ selectedTileId: null }), 0);
     }
 
