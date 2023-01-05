@@ -4,7 +4,7 @@ import { useGameLoop } from "../../hooks/useGameLoop";
 import TileMenu from "../TileMenu/TileMenu";
 import Tiles from "../Tiles/Tiles";
 import Enemies from "../Enemies/Enemies";
-import Shots from "../Shots/Shots";
+import Bullets from "../Bullets/Bullets";
 import { useStore } from "../../context/createFastContext";
 import EnemyPath from "../Enemies/EnemyPath";
 import { useClick } from "../../hooks/useClick";
@@ -74,7 +74,7 @@ export function Game() {
             farthestEnemy = enemy;
           }
         }
-      } // end of inner loop
+      } // end enemy loop
 
       const targetEnemy = farthestEnemy; // or others
       const diff = tower.cooldown - elapsed;
@@ -83,10 +83,10 @@ export function Game() {
       if (tower.cooldown > 0) {
         tower.cooldown = diff;
       } else if (targetEnemy) {
+        // console.log("SHOOT!");
         tower.cooldown = freshCooldown;
         tower.lastShot = waveTime;
 
-        console.log("SHOOT!");
         const newBullet = {
           id: bulletCount.current++,
           type: tower.name,
@@ -96,25 +96,10 @@ export function Game() {
           enemyPos: targetEnemy.pos,
           pos: tower.pos,
           enemyId: targetEnemy.id,
-          // enemy: targetEnemy,
-          // tower: tower,
         };
         bullets.current = [...bullets.current, newBullet];
       }
-
-      // console.log({
-      //   n: tower.name,
-      //   waveTime,
-      //   targetEnemy,
-      //   elapsed,
-      //   diff,
-      //   freshCooldown,
-      //   cooldown: tower.cooldown,
-      //   shotsPerSecond: tower.shotsPerSecond,
-      // });
-    }
-
-    // console.log(towers.current.map((t) => t.cooldown));
+    } // end tower loop
 
     // MOVE BULLETS, HANDLE ENEMY HIT (UPDATE/REMOVE ENEMY & BULLET REMOVAL)
     for (let [b, bullet] of bullets.current.entries()) {
@@ -225,7 +210,7 @@ export function Game() {
             }}
           />
           <Enemies />
-          <Shots shots={bullets.current} />
+          <Bullets bullets={bullets.current} />
           <TileMenu
             onWaveCalled={() => {
               const wave = waveNumber + 1;
@@ -243,11 +228,14 @@ export function Game() {
             }}
             onTowerCreated={(newTower, updatedTiles) => {
               console.log("onTowerCreated", newTower, updatedTiles);
+              towers.current = [...storeTowers, newTower];
+
               setStore({
-                towers: [...storeTowers, newTower],
+                towers: towers.current,
                 stages: updatedTiles,
                 gold: gold - newTower.price,
               });
+
               if (isPlaying) {
                 pause();
                 setTimeout(() => play(), 120);

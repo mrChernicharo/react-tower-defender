@@ -255,41 +255,41 @@ export const ENEMY_WAVES = [
     name: "goblin",
     lane: "left",
     delay: 8,
-  // },
-  // {
-  //   name: "goblin",
-  //   lane: "right",
-  //   delay: 12,
-  // },
-  // {
-  //   name: "goblin",
-  //   lane: "center",
-  //   delay: 12,
-  // },
-  // {
-  //   name: "orc",
-  //   lane: "center",
-  //   delay: 16,
-  // },
-  // {
-  //   name: "orc",
-  //   lane: "right",
-  //   delay: 20,
-  // },
-  // {
-  //   name: "goblin",
-  //   lane: "left",
-  //   delay: 20,
-  // },
-  // {
-  //   name: "goblin",
-  //   lane: "right",
-  //   delay: 24,
-  // },
-  // {
-  //   name: "goblin",
-  //   lane: "right",
-  //   delay: 24,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 12,
+  },
+  {
+    name: "goblin",
+    lane: "center",
+    delay: 12,
+  },
+  {
+    name: "orc",
+    lane: "center",
+    delay: 16,
+  },
+  {
+    name: "orc",
+    lane: "right",
+    delay: 20,
+  },
+  {
+    name: "goblin",
+    lane: "left",
+    delay: 20,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 24,
+  },
+  {
+    name: "goblin",
+    lane: "right",
+    delay: 24,
   },
 ];
 
